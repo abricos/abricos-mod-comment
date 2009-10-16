@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: page.php 3 2009-06-10 10:30:52Z roosit $
+* @version $Id$
 * @package CMSBrick
 * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
