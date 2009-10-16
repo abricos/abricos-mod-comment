@@ -1,6 +1,15 @@
 <?php
+/**
+ * Схема таблиц модуля
+ * @version $Id$
+ * @package CMSBrick
+ * @subpackage Comment
+ * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @author Alexander Kuzmin (roosit@cmsbrick.ru)
+ */
 
-global $cms;
+$cms = CMSRegistry::$instance;
 $charset = "CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'";
 $svers = $cms->modules->moduleUpdateShema->serverVersion;
 $pfx = $cms->db->prefix;

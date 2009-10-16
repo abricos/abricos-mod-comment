@@ -1,19 +1,25 @@
 <?php
 /**
-* @version $Id$
-* @package CMSBrick
-* @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
-*/
-
-/**
- * Модуль комментариев
+ * Модуль "Комментарии"
+ * 
+ * @version $Id$
+ * @package CMSBrick
+ * @subpackage Comment
+ * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @author Alexander Kuzmin (roosit@cmsbrick.ru)
  */
+
 $cms = CMSRegistry::$instance;
 
 $modComment = new CMSModuleComment();
 $cms->modules->Register($modComment);
 
+/**
+ * Модуль "Комментарии"
+ * @package CMSBrick
+ * @subpackage Comment
+ */
 class CMSModuleComment extends CMSModule{
 	
 	public $commentData = null;
@@ -35,6 +41,11 @@ class CMSModuleComment extends CMSModule{
 	
 }
 
+/**
+ * Статичные функции запросов к базе данных
+ * @package CMSBrick
+ * @subpackage Comment
+ */
 class CMSQComt{
 	
 	const STATUS_OK = 0;

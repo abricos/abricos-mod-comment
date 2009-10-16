@@ -1,11 +1,18 @@
 <?php
 /**
-* @version $Id$
-* @package CMSBrick
-* @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
-*/
+ * @version $Id$
+ * @package CMSBrick
+ * @subpackage Comment
+ * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @author Alexander Kuzmin (roosit@cmsbrick.ru)
+ */
 
+/**
+ * Менеджер комментариев
+ * @package CMSBrick
+ * @subpackage Comment
+ */
 class CMSCommentManager {
 	
 	/**
@@ -46,9 +53,9 @@ class CMSCommentManager {
 	}
 	
 	/**
-	 * Добавление комментария
-	 *
-	 * @param stdClass $d
+	 * Добавить комментарий
+	 * @param integer $contentid идентификатор страницы
+	 * @param object $d данные комментария
 	 */
 	public function Append($contentid, $d){
 		if (!$this->session->IsRegistred()){ return; }
