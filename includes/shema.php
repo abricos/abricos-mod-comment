@@ -33,8 +33,24 @@ if ($updateManager->isInstall()){
 	);
 }
 
-if ($updateManager->isInstall() || $updateManager->isUpdate('0.3')){
-	CMSRegistry::$instance->modules->GetModule('comment')->permission->InstallDefault();
+if ($updateManager->isUpdate('0.3.1')){
+	CMSRegistry::$instance->modules->GetModule('comment')->permission->Install();
+}
+
+if ($updateManager->isUpdate('0.3.2')){
+	// таблица будет хранить идентификатор последнего прочитавшего комментария
+	$db->query_write("
+		CREATE TABLE IF NOT EXISTS ".$pfx."cmt_lastview (
+		  `lastviewid` int(10) UNSIGNED NOT NULL auto_increment,
+		  `contentid` int(10) UNSIGNED NOT NULL,
+		  `userid` int(10) UNSIGNED NOT NULL,
+		  `commentid` int(10) UNSIGNED NOT NULL,
+		  `dateline` int(10) UNSIGNED NOT NULL,
+		  PRIMARY KEY  (`lastviewid`),
+		  KEY `userid` (`userid`),
+		  KEY `contentid` (`contentid`)
+		)".$charset
+	);
 }
 
 ?>

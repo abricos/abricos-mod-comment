@@ -10,6 +10,7 @@
 
 $brick = Brick::$builder->brick;
 $contentId = Brick::$input->clean_gpc('g', 'contentid', TYPE_INT);
+$manager = CMSRegistry::$instance->modules->GetModule('comment')->GetManager();
 
 if (empty($contentId)){
 	$contentId = Brick::$contentId;
@@ -25,26 +26,29 @@ if ($contentId == 0){
 $brick->param->var['cid'] = $contentId;
 
 $data = array();
-$rows = CMSQComment::Comments(Brick::$db, $contentId);
+$rd = $manager->CommentsWithLastView($contentId);
+// $rows = $manager->Comments($contentId); 
 $lst = ""; $t = "";
 $slst = "";
-while (($row = Brick::$db->fetch_array($rows))){
+foreach ($rd->list as $row){
 	if ($row['st'] == 1){
 		$row['bd'] = '';
 	}
 	
-	$t = str_replace('#id#', $row['id'], $brick->param->var['t']);
-	$t = str_replace('#u#', $row['unm'], $t);
-	$t = str_replace('#c#', $row['bd'], $t);
-	$lst .= $t;
+	$lst .= Brick::ReplaceVarByData($brick->param->var['t'], array(
+		"id" => $row['id'],
+		"u" => $row['unm'],
+		"c" => $row['bd']
+	));
 	unset($row['bd']);
 	
 	$slst .= str_replace('#c#', json_encode($row), $brick->param->var['si']);
 }
 $brick->param->var['lst'] = $lst;
 $brick->param->var['slst'] = $slst;
+$brick->param->var['lid'] = $rd->lastview;
 
-if (Brick::$session->IsRegistred()){
+if (CMSRegistry::$instance->user->IsRegistred()){
 	$brick->param->var['ft'] = $brick->param->var['ftreg']; 
 }
 

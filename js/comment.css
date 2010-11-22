@@ -1,0 +1,152 @@
+.mod-comment {
+	clear:both;
+	margin-top:20px;
+	text-align:left;
+	line-height:150%;
+}
+.mod-comment ul ul {
+	margin-left:20px;
+}
+.mod-comment h2, 
+.mod-comment h3	{
+	border-bottom: 0;
+	background:#FFFFFF url(../images/balloon-left.gif) no-repeat scroll 0 21%;
+	color:#666;
+	font-family:Verdana,sans-serif;
+	font-size:1.3em;
+	font-weight:bold;
+	padding-left:23px;
+}
+.mod-comment h2{
+	background: url(../images/balloon-left.gif) no-repeat scroll 0 21%;
+}
+.mod-comment h3	{
+	background: url(../images/balloon-pencil.png) no-repeat scroll 0 21%;
+}
+.mod-comment h2 span	{
+	font-size: 0.8em;
+	font-weight: normal;
+}
+.mod-comment .item .newreply {
+	background:none repeat scroll 0 0 #E8E8FF;
+}
+
+.mod-comment .item .meta {
+	margin-top: 12px;
+}
+
+.mod-comment .item .meta abbr	{
+	padding-left: 1em;
+	font-size:0.83em;
+	border:medium none;
+	color: #999999;
+}
+.mod-comment .item .meta span	{
+	font-size: 0.9em; 
+	padding-left: 1em;
+	font-weight: bold;
+	color: #c00;
+}
+.mod-comment .item .meta a.username {
+	color:#666666;
+	font-size:11px;
+	font-weight:bold;
+	text-decoration:none;
+}
+.mod-comment .item .meta a.username:hover {
+	color:#777777;
+}
+.mod-comment .item .meta abbr + a	{
+	color: #6A7398;
+	font-size:0.83em;
+	margin-left: 5px;
+}
+.mod-comment .item .user	{
+	width: 24px;
+	height: 24px;
+	vertical-align: middle;
+	margin-right: 4px
+}
+.mod-comment .item .content	{
+	background:none repeat scroll 0 0 #F7F7F7;	
+	margin-top: 10px;
+	font-size: 90%;
+	text-align: left;
+}
+.mod-comment .item .content p	{
+	margin:0;
+}
+
+.mod-comment .item .content .tb {
+	background:url("/modules/comment/images/ct-tb.gif") repeat-x scroll 0 0 transparent;
+	height:15px;
+	margin-left:36px;
+	overflow:hidden;
+}
+.mod-comment .item .content .tl {
+	background:url("/modules/comment/images/ct-tl.gif") no-repeat scroll left bottom transparent;
+	height:15px;
+}
+
+.mod-comment .item .content .tr {
+	background:url("/modules/comment/images/ct-tr.gif") no-repeat scroll right bottom transparent;
+	height:15px;
+}
+
+.mod-comment .item  .content .text {
+	border-left:1px solid #DDDEDE;
+	border-right:1px solid #DDDEDE;
+	overflow:hidden;
+	padding:5px 25px 5px 10px;
+}
+
+.mod-comment .item .content .bb {
+	background:url("/modules/comment/images/ct-bb.gif") repeat-x scroll 0 0 transparent;
+	height:7px;
+	margin-left:7px;
+}
+.mod-comment .item .content .br {
+	background:url("/modules/comment/images/ct-br.gif") no-repeat scroll right top transparent;
+	height:7px;
+}
+.mod-comment .item .content .bl {
+	background:url("/modules/comment/images/ct-bl.gif") no-repeat scroll left top transparent;
+	height:7px;
+}
+
+.mod-comment-manblock {
+	width: 32px;
+	background:none repeat scroll 0 0 #999999;
+}
+ul.mod-comment-manblock li {
+	padding: 2px 0 2px 2px;
+}
+.mod-comment-manblock a.button {
+	background: url("/modules/comment/images/refresh.gif") no-repeat scroll left top transparent;
+	display: block;
+	height: 29px;
+	width: 28px;
+}
+.mod-comment-manblock a.button-loading {
+	background: url("/modules/comment/images/refresh-loading.gif") no-repeat scroll left top transparent;
+	display: block;
+	height: 29px;
+	width: 28px;
+}
+.mod-comment-manblock .newcomments {
+	text-align: center;
+}
+.mod-comment-manblock .newcomments .divider {
+	border-bottom:1px solid #DDDDDD;
+	border-top:1px solid #5C5C5C;
+	height:0;
+	margin-top:1px;
+	width:28px;
+}
+.mod-comment-manblock .newcomments a.count {
+	color:white;
+	display:block;
+	font-weight:normal;
+	padding:4px 0;
+	text-decoration:none;
+}

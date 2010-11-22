@@ -9,10 +9,10 @@
  */
 
 // оставлять комментарии могут только зарегистрированные пользователи
-if (!Brick::$session->IsRegistred()){ return; }
+if (!CMSRegistry::$instance->user->IsRegistred()){ return; }
 
 $brick = Brick::$builder->brick;
-$user = &Brick::$session->userinfo;
+$user = &CMSRegistry::$instance->user->info;
 
 $p_do = Brick::$input->clean_gpc('g', 'do', TYPE_STR);
 $p_contentId = Brick::$input->clean_gpc('g', 'contentid', TYPE_INT);
@@ -38,12 +38,12 @@ if ($p_do == "send" && !empty($p_comment)){
 	$data['parentcommentid'] = $p_commentId;
 	$data['body'] = $p_comment;
 
-	$newCommentId = CMSQComment::Append(Brick::$db, $data);
+	$newCommentId = CommentQuery::Append(Brick::$db, $data);
 	$data['commentid'] = $newCommentId; 
 	
 	/* Отправка писем уведомлений */
 	
-	$contentinfo = CMSSqlQuery::ContentInfo(Brick::$db, $p_contentId);
+	$contentinfo = CoreQuery::ContentInfo(Brick::$db, $p_contentId);
 
 	if (!empty($contentinfo)){
 		$module = Brick::$modules->GetModule('comment');
@@ -54,7 +54,7 @@ if ($p_do == "send" && !empty($p_comment)){
 	}
 }
 
-$rows = CMSQComment::Comments(Brick::$db, $p_contentId, $p_last);
+$rows = CommentQuery::Comments(Brick::$db, $p_contentId, $p_last);
 
 while (($row = Brick::$db->fetch_array($rows))){
 	if ($row['st'] == 1){

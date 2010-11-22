@@ -1,7 +1,7 @@
 <!--{panel}-->
 <div id="mod-comment" class="mod-comment">
 	<h2>{#comment.new.panel.hd}<span id="{i#count}">(0)</span> 
-		<a href="#" title="{#comment.new.panel.refresh}" id="{i#refresh}">
+		<a href="#" title="{#comment.new.panel.refresh}" id="{i#refresh}" style="display: none;">
 			<img id="{i#refreshimg}" alt="{#comment.new.panel.refresh}" src="/images/refresh.png" />
 		</a>
 	</h2>
@@ -22,19 +22,27 @@
 <ul id="{i#id}-{v#id}">{v#list}</ul>
 
 <!--{comment}-->
-<li class="item">
-	<div class="meta">
-		<a title="{v#unm}" href="#">
-			<img class="user" src="/tt/{v#ttname}/images/stub-user-small.gif" alt="{v#unm}" />
+<li class="item" id="{i#id}-{v#id}">
+	<div class="meta" id="{i#meta}-{v#id}">
+		<a title="{v#unm}" href="#" class="show-user-profile user-{v#uid}">
+			{v#avt}
 		</a>
-		<a class="bk-comt-url" href="#">{v#unm}</a>
-		<abbr title="{v#de}">{v#de}</abbr>
-		<a href="#" title="{#comment.new.comment}">#</a>
+		<div style="display: inline; margin-left: 10px; vertical-align: top">
+			<a class="username show-user-profile user-{v#uid}" href="#">{v#unm}</a>
+			<abbr title="{v#de}">{v#de}</abbr>
+			<a href="#" title="{#comment.new.comment}" style="display: none">#</a>
+		</div>
+		<br style="clear: both" />
 	</div>
 	<div class="content">
-		{v#bd}
-		{v#reply}
+		<div class="tl"><div class="tb"><div class="tr"></div></div>
+		</div>
+		<div class="text">
+			{v#bd}
+		</div>
+		<div class="bl"><div class="bb"><div class="br"></div></div></div>
 	</div>
+	{v#reply}
 	<div id="{i#child}-{v#id}"></div>
 </li>
 
@@ -43,10 +51,32 @@
 <div id="{i#reply}-{v#id}"></div>
 
 <!--{replypanel}-->
-<textarea id="{i#editor}" style="width: 550px; height: 100px"></textarea>
-<p>
-	<input type="button" id="{i#bpreview}" value="{#comment.new.replypanel.preview}" />
-	<input type="button" id="{i#bsend}" value="{#comment.new.replypanel.sendcom}" />
-	<input type="button" id="{i#bcancel}" value="{#comment.new.replypanel.cancel}" />
-</p>
-<div id="{i#preview}"></div>
+<div id="{i#preview}" style="padding: 3px;"></div>
+<textarea id="{i#editor}" style="width: 550px; height: 200px"></textarea>
+<table><tbody><tr>
+<td>
+	<div id="{i#buttons}" style="margin: 5px;">	
+		<input type="button" id="{i#bpreview}" value="{#comment.new.replypanel.preview}" class="btn"/>
+		<input type="button" id="{i#bsend}" value="{#comment.new.replypanel.sendcom}" class="btn" />
+		<input type="button" id="{i#bcancel}" value="{#comment.new.replypanel.cancel}" class="btn" />
+	</div>
+</td>
+<td>
+	<div id="{i#wait}" style="margin: 9px; display: none;" >
+		<img src="/images/loading.gif" /> Отправляю данные...
+	</div>
+</td>
+</tr></tbody></table>
+
+<!--{manblock}-->
+<ul id="{i#id}" class="mod-comment-manblock" style="{v#pos}">
+	<li>
+		<div>
+			<a id="{i#brefresh}" class="button" href="#comments" title="Обновить комментарии"></a>
+			<div id="{i#newblock}" class="newcomments" style="display: none;">
+				<div class="divider"></div>
+				<a id="{i#bcount}" class="count" href="#" title="Перейти к следующему новому комментарию">1</a>
+			</div>
+		</div>
+	</li>
+</ul>

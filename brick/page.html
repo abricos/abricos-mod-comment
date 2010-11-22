@@ -1,20 +1,34 @@
 <!--[*]
 [script]page.php[/script]
-[bkvar=t]<div><span>#id#</span><span> #u#: </span><span>#c#</span></div>[/bkvar]
+[bkvar=t]<div><span>{v#id}</span><span> {v#u}: </span><span>{v#c}</span></div>[/bkvar]
 [bkvar=lst][/bkvar]
 [bkvar=si]d[d.length]=#c#;[/bkvar]
 [bkvar=slst][/bkvar]
 [bkvar=cid]0[/bkvar]
+[bkvar=lid]0[/bkvar]
+[mcss=comment]comment.css[/mcss]
 [*]-->
-<div id="mod-comment-data-[bkvar]cid[/bkvar]">
+<div id="mod-comment-data-[bkvar]cid[/bkvar]"><a id="comments" name="comments"></a>
 	[bkvar]lst[/bkvar]
 </div>
+<div id="mod-comment-manblock-[bkvar]cid[/bkvar]"></div>
 <script language='JavaScript' type='text/javascript' charset='utf-8'>
 	var d = [];
 	[bkvar]slst[/bkvar]
-	Brick.Component.API.fire('comment', 'api', 'buildComments', {
-		elementId: 'mod-comment-data-[bkvar]cid[/bkvar]',
-		dbContentId: [bkvar]cid[/bkvar], 
-		data: d
+
+	Brick.ff('comment', 'comment', function(){
+		Brick.mod.comment.API.buildCommentTree({
+			'container': 'mod-comment-data-[bkvar]cid[/bkvar]',
+			'dbContentId': [bkvar]cid[/bkvar],
+			'config': {
+				'lastView': [bkvar]lid[/bkvar],
+				'data': d,
+				'manBlock': new Brick.mod.comment.ManagerBlockWidget(
+					'mod-comment-manblock-[bkvar]cid[/bkvar]',
+					'position: fixed; right: 0px; top: 43%;'
+				)
+			}
+		});
 	});
+
 </script> 
