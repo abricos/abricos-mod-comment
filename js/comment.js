@@ -239,7 +239,6 @@ Component.entryPoint = function(){
 			}else{
 				list.innerHTML += item;
 			}
-			aTargetBlank(Dom.get(TId['comment']['bd']+'-'+di['id']));
 			this.count++;
 		},
 		
@@ -294,6 +293,15 @@ Component.entryPoint = function(){
 				this.manBlock.setNewComments(mbData);
 			}
 			this.renderCount();
+			
+			setTimeout(function(){
+				for (var id in GB){
+					try{
+						aTargetBlank(Dom.get(TId['comment']['bd']+'-'+id));
+					}catch(e){}
+				}
+			}, 1000);
+
 		},
 		
 		/**
