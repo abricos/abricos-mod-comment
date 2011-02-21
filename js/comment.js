@@ -51,6 +51,20 @@ Component.entryPoint = function(){
 		});
 	};
 	
+	var aTargetBlank = function(el){
+		if (!el || L.isNull(el)){ return; }
+		if (el.tagName == 'A'){
+			el.target = "_blank";
+		}else if (el.tagName == 'IMG'){
+			el.style.maxWidth = "100%";
+			el.style.height = "auto";
+		}
+		var chs = el.childNodes;
+		for (var i=0;i<chs.length;i++){
+			if (chs[i]){ aTargetBlank(chs[i]); }
+		}
+	};
+	
 	var CommentBase = {};
 
 	/**
@@ -225,6 +239,7 @@ Component.entryPoint = function(){
 			}else{
 				list.innerHTML += item;
 			}
+			aTargetBlank(Dom.get(TId['comment']['bd']+'-'+di['id']));
 			this.count++;
 		},
 		
