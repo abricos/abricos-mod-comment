@@ -103,6 +103,7 @@ class CommentQuery {
 				a.dateedit as de,
 				IF(a.status=".CommentQuery::STATUSS_SPAM.", '', a.body) as bd, 
 				a.status as st, 
+				u.userid as uid,
 				u.avatar as avt,
 				u.firstname as fnm,
 				u.lastname as lnm
