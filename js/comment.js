@@ -65,6 +65,29 @@ Component.entryPoint = function(){
 		}
 	};
 	
+	var CommentManager = function(readOnly){
+		this.init(readOnly);
+	};
+	CommentManager.prototype = {
+		init: function(readOnly){
+			buildTemplate(this, 'comment,reply');
+			this.readOnly = readOnly || false;
+		},
+		buildHTML: function(di){
+			return this._TM.replace('comment', {
+				'unm': Brick.mod.uprofile.viewer.buildUserName(di),
+				'uid': di['uid'],
+				'avt': UP.avatar.get45(di),
+				'ttname': Brick.env.ttname,
+				'reply': (!this.readOnly ? this._T['reply'] : ""),
+				'de':  Brick.dateExt.convert(di['de']),
+				'id': di['id'],
+				'bd': di['st']>0?T['spam']: di['bd']
+			});
+		}
+	};
+	NS.CommentManager = CommentManager;
+	
 	var CommentBase = {};
 
 	/**
