@@ -10,10 +10,6 @@
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
 
-
-$modComment = new CommentModule();
-CMSRegistry::$instance->modules->Register($modComment);
-
 /**
  * Модуль "Комментарии"
  * @package Abricos
@@ -75,5 +71,7 @@ class CommentPermission extends CMSPermission {
 	}
 }
 
+$modComment = new CommentModule();
+CMSRegistry::$instance->modules->Register($modComment);
 
 ?>
