@@ -10,7 +10,7 @@
 
 require_once 'dbquery.php';
 
-class CommentManager extends ModuleManager {
+class CommentManager extends Ab_ModuleManager {
 
 	/**
 	 * 
@@ -18,30 +18,20 @@ class CommentManager extends ModuleManager {
 	 */
 	public $module = null;
 	
-	/**
-	 * User
-	 * @var User
-	 */
-	public $user = null;
-	public $userid = 0;
-	
-	public function CommentManager(CommentModule $module){
-		parent::ModuleManager($module);
-		
-		$this->user = CMSRegistry::$instance->modules->GetModule('user');
-		$this->userid = $this->user->info['userid'];
+	public function __construct(CommentModule $module){
+		parent::__construct($module);
 	}
 	
 	public function IsAdminRole(){
-		return $this->module->permission->CheckAction(CommentAction::ADMIN) > 0;
+		return $this->IsRoleEnable(CommentAction::ADMIN);
 	}
 	
 	public function IsWriteRole(){
-		return $this->module->permission->CheckAction(CommentAction::WRITE) > 0;
+		return $this->IsRoleEnable(CommentAction::WRITE);
 	}
 	
 	public function IsViewRole(){
-		return $this->module->permission->CheckAction(CommentAction::VIEW) > 0;
+		return $this->IsRoleEnable(CommentAction::VIEW);
 	}
 	
 	public function DSProcess($name, $rows){
@@ -104,9 +94,9 @@ class CommentManager extends ModuleManager {
 	 * @param integer $contentid идентификатор контента
 	 */
 	private function ContentManager($contentid){
-		$cinfo = CoreQuery::ContentInfo($this->db, $contentid);
+		$cinfo = Ab_CoreQuery::ContentInfo($this->db, $contentid);
 		if (empty($cinfo)){ return null; }
-		$module = CMSRegistry::$instance->modules->GetModule($cinfo['modman']);
+		$module = Abricos::GetModule($cinfo['modman']);
 		$manager = $module->GetManager();
 		return $manager;
 	}
@@ -129,7 +119,7 @@ class CommentManager extends ModuleManager {
 			return null;
 		}
 
-		$utmanager = CMSRegistry::$instance->GetUserTextManager();
+		$utmanager = Abricos::TextParser();
 		
 		$text = $utmanager->Parser($text);
 		if (empty($text)){ return null; }
@@ -149,7 +139,7 @@ class CommentManager extends ModuleManager {
 		if (!$this->IsWriteRole()){
 			$ret->text = "Access denied!";
 		}else{
-			$utmanager = CMSRegistry::$instance->GetUserTextManager();
+			$utmanager = Abricos::TextParser();
 			$ret->text = $utmanager->Parser($text);
 		}
 		return $ret;

@@ -9,21 +9,21 @@
  */
 
 // оставлять комментарии могут только зарегистрированные пользователи
-if (!CMSRegistry::$instance->user->IsRegistred()){ return; }
+if (Abricos::$user->id == 0){ return; }
 
 $brick = Brick::$builder->brick;
-$user = &CMSRegistry::$instance->user->info;
+$user = &Abricos::$user->info;
 
-$p_do = Brick::$input->clean_gpc('g', 'do', TYPE_STR);
-$p_contentId = Brick::$input->clean_gpc('g', 'contentid', TYPE_INT);
-$p_comment = Brick::$input->clean_gpc('p', 'comment', TYPE_STR);
-$p_last = Brick::$input->clean_gpc('g', 'last', TYPE_INT);
+$p_do = Abricos::CleanGPC('g', 'do', TYPE_STR);
+$p_contentId = Abricos::CleanGPC('g', 'contentid', TYPE_INT);
+$p_comment = Abricos::CleanGPC('p', 'comment', TYPE_STR);
+$p_last = Abricos::CleanGPC('g', 'last', TYPE_INT);
 
 $brick->param->var['cid'] = $p_contentId;
 
 if ($p_do == "send" && !empty($p_comment)){
 
-	$p_commentId = Brick::$input->clean_gpc('g', 'commentid', TYPE_INT);
+	$p_commentId = Abricos::CleanGPC('g', 'commentid', TYPE_INT);
 	
 	$allowTags = array(
     'b', 'strong', 'i', 'em', 'u','a',
@@ -38,25 +38,25 @@ if ($p_do == "send" && !empty($p_comment)){
 	$data['parentcommentid'] = $p_commentId;
 	$data['body'] = $p_comment;
 
-	$newCommentId = CommentQuery::Append(Brick::$db, $data);
+	$newCommentId = CommentQuery::Append(Abricos::$db, $data);
 	$data['commentid'] = $newCommentId; 
 	
 	/* Отправка писем уведомлений */
 	
-	$contentinfo = CoreQuery::ContentInfo(Brick::$db, $p_contentId);
+	$contentinfo = Ab_CoreQuery::ContentInfo(Abricos::$db, $p_contentId);
 
 	if (!empty($contentinfo)){
-		$module = Brick::$modules->GetModule('comment');
+		$module = Abricos::GetModule('comment');
 		$module->commentData = $data;
 		
-		$module = Brick::$modules->GetModule($contentinfo['modman']);
+		$module = Abricos::GetModule($contentinfo['modman']);
 		$module->OnComment();
 	}
 }
 
-$rows = CommentQuery::Comments(Brick::$db, $p_contentId, $p_last);
+$rows = CommentQuery::Comments(Abricos::$db, $p_contentId, $p_last);
 
-while (($row = Brick::$db->fetch_array($rows))){
+while (($row = Abricos::$db->fetch_array($rows))){
 	if ($row['st'] == 1){
 		$row['bd'] = '';
 	}

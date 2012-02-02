@@ -9,8 +9,8 @@
  */
 
 $brick = Brick::$builder->brick;
-$contentId = Brick::$input->clean_gpc('g', 'contentid', TYPE_INT);
-$manager = CMSRegistry::$instance->modules->GetModule('comment')->GetManager();
+$contentId = Abricos::CleanGPC('g', 'contentid', TYPE_INT);
+$manager = Abricos::GetModule('comment')->GetManager();
 
 if (empty($contentId)){
 	$contentId = Brick::$contentId;
@@ -48,7 +48,7 @@ $brick->param->var['lst'] = $lst;
 $brick->param->var['slst'] = $slst;
 $brick->param->var['lid'] = $rd->lastview;
 
-if (CMSRegistry::$instance->user->IsRegistred()){
+if (Abricos::$user->id > 0){
 	$brick->param->var['ft'] = $brick->param->var['ftreg']; 
 }
 

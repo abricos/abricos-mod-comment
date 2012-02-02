@@ -15,12 +15,12 @@
  * @package Abricos
  * @subpackage Comment
  */
-class CommentModule extends CMSModule{
+class CommentModule extends Ab_Module{
 	
 	private $_manager = null;
 	
 	function __construct(){
-		$this->version = "0.3.2";
+		$this->version = "0.3.3";
 		$this->name = "comment";
 		
 		$this->permission = new CommentPermission($this);
@@ -71,7 +71,6 @@ class CommentPermission extends CMSPermission {
 	}
 }
 
-$modComment = new CommentModule();
-CMSRegistry::$instance->modules->Register($modComment);
+Abricos::ModuleRegister(new CommentModule());
 
 ?>

@@ -13,7 +13,7 @@ class CommentQuery {
 	const STATUS_OK = 0;
 	const STATUSS_SPAM = 1;
 	
-	public static function SpamSet(CMSDatabase $db, $commentId, $newStatus){
+	public static function SpamSet(Ab_Database $db, $commentId, $newStatus){
 		$sql = "
 			UPDATE ".$db->prefix."cmt_comment
 			SET status='".bkstr($newStatus)."'
@@ -23,7 +23,7 @@ class CommentQuery {
 		$db->query_write($sql);
 	}
 	
-	public static function FullListCount(CMSDatabase $db){
+	public static function FullListCount(Ab_Database $db){
 		$sql = "
 			SELECT count(commentid) as cnt 
 			FROM ".$db->prefix."cmt_comment
@@ -31,7 +31,7 @@ class CommentQuery {
 		return $db->query_read($sql);
 	}
 	
-	public static function FullList(CMSDatabase $db, $page, $limit){
+	public static function FullList(Ab_Database $db, $page, $limit){
 		$from = (($page-1)*$limit);
 		$sql = "
 			SELECT 
@@ -52,7 +52,7 @@ class CommentQuery {
 		return $db->query_read($sql);
 	}
 	
-	public static function Append(CMSDatabase $db, $contentid, $d){
+	public static function Append(Ab_Database $db, $contentid, $d){
 		$sql = "
 			INSERT INTO ".$db->prefix."cmt_comment (
 				contentid, 
@@ -74,7 +74,7 @@ class CommentQuery {
 		return $db->insert_id();
 	}
 	
-	public static function Comments(CMSDatabase $db, $contentid, $lastid = 0){
+	public static function Comments(Ab_Database $db, $contentid, $lastid = 0){
 		$sql = "
 			SELECT 
 				a.commentid as id, 
@@ -95,7 +95,7 @@ class CommentQuery {
 		return $db->query_read($sql);
 	}
 	
-	public static function Comment(CMSDatabase $db, $commentid, $contentid, $retarray = false){
+	public static function Comment(Ab_Database $db, $commentid, $contentid, $retarray = false){
 		$sql = "
 			SELECT 
 				a.commentid as id, 
@@ -115,7 +115,7 @@ class CommentQuery {
 		return $retarray ? $db->query_first($sql) : $db->query_read($sql);
 	}
 	
-	public static function LastView(CMSDatabase $db, $userid, $contentid){
+	public static function LastView(Ab_Database $db, $userid, $contentid){
 		$sql = "
 			SELECT 
 				commentid as id,
@@ -127,7 +127,7 @@ class CommentQuery {
 		return $db->query_first($sql);
 	}
 	
-	public static function LastViewAppend(CMSDatabase $db, $userid, $contentid, $commentid){
+	public static function LastViewAppend(Ab_Database $db, $userid, $contentid, $commentid){
 		$sql = "
 			INSERT INTO ".$db->prefix."cmt_lastview (contentid, userid, commentid, dateline) VALUES (
 				".bkint($contentid).",
@@ -140,7 +140,7 @@ class CommentQuery {
 		return $db->insert_id();
 	}
 	
-	public static function LastViewUpdate(CMSDatabase $db, $userid, $contentid, $commentid){
+	public static function LastViewUpdate(Ab_Database $db, $userid, $contentid, $commentid){
 		$sql = "
 			UPDATE ".$db->prefix."cmt_lastview
 			SET commentid=".bkint($commentid)."

@@ -9,8 +9,8 @@
  */
 
 
-$mod = Brick::$modules->GetModule('sys');
-$manager = Brick::$modules->GetModule('comment')->GetManager();
+$mod = Abricos::GetModule('sys');
+$manager = Abricos::GetModule('comment')->GetManager();
 $ds = $mod->getDataSet();
 
 $ret = new stdClass();

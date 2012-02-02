@@ -14,7 +14,7 @@
 	color:#666;
 	font-family:Verdana,sans-serif;
 	font-size:1.3em;
-	font-weight:bold;
+	/* font-weight:bold; /**/
 	padding-left:23px;
 }
 .mod-comment h2.mcmt-title span	{
@@ -106,6 +106,10 @@
 .mod-comment .item .content .bl {
 	background:url("/modules/comment/images/ct-bl.gif") no-repeat scroll left top transparent;
 	height:7px;
+}
+
+.mod-comment .info {
+	padding-top: 5px;
 }
 
 .mod-comment-manblock {
