@@ -26,7 +26,9 @@ class CommentQuery {
 	public static function FullListCount(Ab_Database $db){
 		$sql = "
 			SELECT count(commentid) as cnt 
-			FROM ".$db->prefix."cmt_comment
+			FROM ".$db->prefix."cmt_comment a
+			INNER JOIN ".$db->prefix."content c ON a.contentid = c.contentid
+			WHERE c.modman='blog'
 		";
 		return $db->query_read($sql);
 	}
@@ -45,7 +47,9 @@ class CommentQuery {
 				u.username as unm,
 				0 as ugp
 			FROM ".$db->prefix."cmt_comment a
-			LEFT JOIN ".$db->prefix."user u ON u.userid = a.userid
+			INNER JOIN ".$db->prefix."user u ON u.userid = a.userid
+			INNER JOIN ".$db->prefix."content c ON a.contentid = c.contentid
+			WHERE c.modman='blog'
 			ORDER BY a.dateline DESC
 			LIMIT ".$from.",".bkint($limit)."
 		";
