@@ -1,28 +1,21 @@
-<!--{panel}-->
-<div id="mod-comment" class="mod-comment">
-	<h2 class="mcmt-title">{#comment.new.panel.hd}<span id="{i#count}">(0)</span> 
-		<a href="#" title="{#comment.new.panel.refresh}" id="{i#refresh}" style="display: none;">
-			<img id="{i#refreshimg}" alt="{#comment.new.panel.refresh}" src="/images/refresh.png" />
+<!--{panel}--><div id="mod-comment" class="mod-comment">
+	<h2 class="mcmt-title">{#mod.comment.new.panel.hd}<span id="{i#count}">(0)</span> 
+		<a href="#" title="{#mod.comment.new.panel.refresh}" id="{i#refresh}" style="display: none;">
+			<img id="{i#refreshimg}" alt="{#mod.comment.new.panel.refresh}" src="/images/refresh.png" />
 		</a>
 	</h2>
 	<div id="{i#list}"></div>
 	<div class="info">
 		<div id="{i#replycont}">
-			<a id="{i#breplyroot}" href="#" title="Опубликовать новый комментарий">{#comment.new.panel.writecom}</a>
+			<a id="{i#breplyroot}" href="#" title="{#mod.comment.comment.panel.1}">{#mod.comment.new.panel.writecom}</a>
 		</div>
 		<div id="{i#reply}"></div>
-		<span id="{i#replyrootnone}">{#comment.new.panel.note}</span>
+		<span id="{i#replyrootnone}">{#mod.comment.new.panel.note}</span>
 	</div>
 </div>
-
-<!--{spam}-->
-<strong>{#comment.new.spam}</strong>
-
-<!--{list}-->
-<ul id="{i#id}-{v#id}">{v#list}</ul>
-
-<!--{comment}-->
-<li class="item" id="{i#id}-{v#id}">
+<!--{spam}--><strong>{#mod.comment.new.spam}</strong>
+<!--{list}--><ul id="{i#id}-{v#id}">{v#list}</ul>
+<!--{comment}--><li class="item" id="{i#id}-{v#id}">
 	<div class="meta" id="{i#meta}-{v#id}">
 		<a title="{v#unm}" href="#" class="show-user-profile user-{v#uid}">
 			{v#avt}
@@ -30,7 +23,7 @@
 		<div style="display: inline; margin-left: 10px; vertical-align: top">
 			<a class="username show-user-profile user-{v#uid}" href="#">{v#unm}</a>
 			<abbr title="{v#de}">{v#de}</abbr>
-			<a href="#" title="{#comment.new.comment}" style="display: none">#</a>
+			<a href="#" title="{#mod.comment.new.comment}" style="display: none">#</a>
 		</div>
 		<br style="clear: both" />
 	</div>
@@ -45,20 +38,16 @@
 	{v#reply}
 	<div id="{i#child}-{v#id}"></div>
 </li>
-
-<!--{reply}-->
-<p id="{i#contbtn}-{v#id}"><a href="#" id="{i#id}-{v#id}">{#comment.new.reply}</a></p>
+<!--{reply}--><p id="{i#contbtn}-{v#id}"><a href="#" id="{i#id}-{v#id}">{#mod.comment.new.reply}</a></p>
 <div id="{i#reply}-{v#id}"></div>
-
-<!--{replypanel}-->
-<div id="{i#preview}" style="padding: 3px;"></div>
+<!--{replypanel}--><div id="{i#preview}" style="padding: 3px;"></div>
 <textarea id="{i#editor}" style="width: 550px; height: 200px"></textarea>
 <table><tbody><tr>
 <td>
 	<div id="{i#buttons}" style="margin: 5px;">	
-		<input type="button" id="{i#bpreview}" value="{#comment.new.replypanel.preview}" class="btn"/>
-		<input type="button" id="{i#bsend}" value="{#comment.new.replypanel.sendcom}" class="btn" />
-		<input type="button" id="{i#bcancel}" value="{#comment.new.replypanel.cancel}" class="btn" />
+		<input type="button" id="{i#bpreview}" value="{#mod.comment.new.replypanel.preview}" class="btn"/>
+		<input type="button" id="{i#bsend}" value="{#mod.comment.new.replypanel.sendcom}" class="btn" />
+		<input type="button" id="{i#bcancel}" value="{#mod.comment.new.replypanel.cancel}" class="btn" />
 	</div>
 </td>
 <td>
@@ -67,15 +56,13 @@
 	</div>
 </td>
 </tr></tbody></table>
-
-<!--{manblock}-->
-<ul id="{i#id}" class="mod-comment-manblock" style="{v#pos}">
+<!--{manblock}--><ul id="{i#id}" class="mod-comment-manblock" style="{v#pos}">
 	<li>
 		<div>
-			<a id="{i#brefresh}" class="button" href="#comments" title="Обновить комментарии"></a>
+			<a id="{i#brefresh}" class="button" href="#comments" title="{#mod.comment.comment.manblock.1}"></a>
 			<div id="{i#newblock}" class="newcomments" style="display: none;">
 				<div class="divider"></div>
-				<a id="{i#bcount}" class="count" href="#" title="Перейти к следующему новому комментарию">1</a>
+				<a id="{i#bcount}" class="count" href="#" title="{#mod.comment.comment.manblock.2}">1</a>
 			</div>
 		</div>
 	</li>

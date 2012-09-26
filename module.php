@@ -5,7 +5,6 @@
  * @version $Id$
  * @package Abricos
  * @subpackage Comment
- * @copyright Copyright (C) 2008 Abricos All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
@@ -20,7 +19,7 @@ class CommentModule extends Ab_Module{
 	private $_manager = null;
 	
 	function __construct(){
-		$this->version = "0.3.3";
+		$this->version = "0.3.4";
 		$this->name = "comment";
 		
 		$this->permission = new CommentPermission($this);
