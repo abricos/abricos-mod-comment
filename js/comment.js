@@ -17,24 +17,15 @@ Component.requires = {
 		{name: 'uprofile', files: ['viewer.js']}
     ]
 };
-Component.entryPoint = function(){
+Component.entryPoint = function(NS){
 	
 	var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
 		L = YAHOO.lang;
 	
-	var NS = this.namespace,
-		TMG = this.template, 
-		API = NS.API;
-	
 	var UP = Brick.mod.uprofile;
 	
-	var buildTemplate = function(w, templates){
-		var TM = TMG.build(templates), T = TM.data, TId = TM.idManager;
-		w._TM = TM; w._T = T; w._TId = TId;
-	};
-	
-	Brick.util.CSS.update(Brick.util.CSS['comment']['comment']);
+	var buildTemplate = this.buildTemplate;
 	
 	// загрузка роли пользователя
 	var isViewRole = false,
@@ -89,7 +80,7 @@ Component.entryPoint = function(){
 	NS.CommentManager = CommentManager;
 	
 	var CommentBase = {};
-
+	
 	/**
 	 * Конструктор дерева комментариев на странице.
 	 * 
@@ -108,83 +99,32 @@ Component.entryPoint = function(){
 			'debug': false,
 			'onLoadComments': null
 		}, cfg || {});
-		this.init(container, dbContentId, cfg);
+		
+		Builder.superclass.constructor.call(this, container, {
+			'buildTemplate': buildTemplate, 'tnames': 'panel,spam,list,comment,reply,replypanel' 
+		}, dbContentId, cfg);
 	};
-
-	Builder.prototype = {
-		
-		/**
-		 * Инициализация конструктора дерева комментариев.
-		 * 
-		 * @method init
-		 * @param {HTMLElement|String} container HTML элемент или его идентификатор в Dom.
-		 * @param {Integer} dbContentId Идентификатор из таблицы контента на сервере. 
-		 * @param {Object} cfg Дополнительные параметры.
-		 */
-		init: function(element, dbContentId, cfg){
-		
-			/**
-			 * HTML элемент в котором будет построено дерево комментариев.
-			 * 
-			 * @property element
-			 * @type HTMLElement
-			 */
-			this.element = Dom.get(element);
-			if (L.isNull(this.element)){ return; }
-			
-			/**
-			 * Идентификатор из таблицы контента на сервере.
-			 * 
-			 * @property dbContentId
-			 * @type Integer
-			 */
+	YAHOO.extend(Builder, Brick.mod.widget.Widget, {
+		init: function (dbContentId, cfg){
 			this.dbContentId = dbContentId;
-			
 			this.cfg = cfg;
-			
-			/**
-			 * Идентификатор последнего комментария
-			 * 
-			 * @property lastCommentId
-			 * @type Integer
-			 */
 			this.lastCommentId = 0;
-			
-			/**
-			 * Кол-во комментариев.
-			 * 
-			 * @property count
-			 * @type Integer
-			 */
 			this.count = 0;
-			
-			/**
-			 * Открытый редактор комментария.
-			 * 
-			 * @property reply
-			 * @type Brick.mod.comment.Reply
-			 */
+
+			// текущий редактор комментариев
 			this.reply = null;
 			
 			if (!CommentBase[dbContentId]){
 				CommentBase[dbContentId] = {};
 			}
-
 			this.lastView = cfg['lastView'];
 			this.readOnly = !isWriteRole ? true : cfg['readOnly'];
 			this.manBlock = cfg['manBlock'];
-
+			
 			if (!L.isNull(this.manBlock)){
 				this.manBlock.builder = this;
 			}
-
-			buildTemplate(this, 'panel,spam,list,comment,reply,replypanel');
-
-			var TM = this._TM, TId = this._TId, 
-				el = this.element,
-				__self = this,
-				getEl = function(name){ return Dom.get(TId['panel'][name]); };
-
+			
 			if (!L.isNull(cfg['data'])){
 				// чтение данных
 				var body = {}, data = cfg['data'];
@@ -203,31 +143,27 @@ Component.entryPoint = function(){
 				}
 				cfg['data'] = bdata;
 			}
-			
-			el.innerHTML = TM.replace('panel', {'id': this.dbContentId, 'ttname': Brick.env.ttname });
-			E.on(el, 'click', function(e){if (__self.onClick(E.getTarget(e))){ E.stopEvent(e);}});
-
+		},
+		buildTData: function(dbContentId, cfg){
+			return {
+				'id': dbContentId, 
+				'ttname': Brick.env.ttname
+			};
+		},
+		onLoad: function(dbContentId, cfg){
 			if (!this.readOnly){
-				getEl('replyrootnone').style.display = 'none';
+				this.elHide('replyrootnone');
 			}else{
-				getEl('breplyroot').style.display = 'none';
+				this.elHide('breplyroot');
 			}
 			
 			// если данные по комментариям передают со страницы
 			if (!L.isNull(cfg['data'])){
-				this.render(cfg['data']);
+				this.renderList(cfg['data']);
 			}else{
 				this.refresh();
 			}
 		},
-		
-		/**
-		 * Построить HTML код комментария из шаблона.
-		 * 
-		 * @method _getHTMLNode
-		 * @private 
-		 * @param {Object} di Данные комментария. 
-		 */
 		_getHTMLNode: function(di){
 			return this._TM.replace('comment', {
 				'unm': Brick.mod.uprofile.viewer.buildUserName(di),
@@ -240,7 +176,6 @@ Component.entryPoint = function(){
 				'bd': di['st']>0?T['spam']: di['bd']
 			});
 		},
-		
 		
 		renderComment: function(di){
 			var TM = this._TM, T = this._T, TId = this._TId;
@@ -269,7 +204,7 @@ Component.entryPoint = function(){
 			return Dom.get(this._TId['comment']['id']+'-'+commentid);
 		},
 		
-		render: function(data){
+		renderList: function(data){
 			var GB = CommentBase[this.dbContentId],
 				TM = this._TM, TId = this._TId;
 			
@@ -344,12 +279,11 @@ Component.entryPoint = function(){
 		 * @param {HTMLElement} el
 		 * @return {Boolean}
 		 */
-		onClick: function(el){
+		onClick: function(el, tp){
 			if (!L.isNull(this.reply)){
 				if (this.reply.onClick(el)){ return true; }
 			}
 			var TId = this._TId;
-			var tp = TId['panel'];
 			switch(el.id){
 			case tp['breplyroot']: this.showReply(0); return true;
 			case tp['refresh']:
@@ -401,7 +335,7 @@ Component.entryPoint = function(){
 					if (!request.data){ return; }
 					r = request.data;
 					__self.lastView = r.lastview;
-					__self.render(r.list);
+					__self.renderList(r.list);
 					if (L.isFunction(__self.cfg['onLoadComments'])){
 						__self.cfg.onLoadComments();
 					}
@@ -417,12 +351,11 @@ Component.entryPoint = function(){
 		 */
 		refresh: function(callback){
 			this.send(0, '', callback);
-		}
-	};
-	
+		}		
+	});
 	NS.Builder = Builder;
 	
-	API.buildCommentTree = function(oArgs){
+	NS.API.buildCommentTree = function(oArgs){
 		loadRoles(function(){
 			var b = new Builder(oArgs.container, oArgs.dbContentId, oArgs.config);
 			if (L.isFunction(oArgs['instanceCallback'])){
