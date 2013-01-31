@@ -16,7 +16,7 @@ if ($updateManager->isInstall()){
 	$db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."cmt_comment (
 		  `commentid` int(10) UNSIGNED NOT NULL auto_increment,
-		  `parentcommentid` int(10) UNSIGNED NOT NULL 0 COMMENT 'Комментарий родитель',
+		  `parentcommentid` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Комментарий родитель',
 		  `contentid` int(10) UNSIGNED NOT NULL,
 		  `userid` int(10) UNSIGNED NOT NULL,
 		  `dateline` int(10) UNSIGNED NOT NULL,
