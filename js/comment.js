@@ -14,11 +14,12 @@ Component.requires = {
 	yahoo: ['dom'],
 	mod:[
 		{name: 'user', files: ['permission.js']},
+		{name: 'widget', files: ['lib.js']},
 		{name: 'uprofile', files: ['viewer.js']}
     ]
 };
 Component.entryPoint = function(NS){
-	
+
 	var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
 		L = YAHOO.lang;
@@ -91,6 +92,7 @@ Component.entryPoint = function(NS){
 	 * @param {Object} cfg Дополнительные параметры.
 	 */
 	var Builder = function(container, dbContentId, cfg){
+		
 		cfg = L.merge({
 			'data': null,
 			'readOnly': false,
@@ -106,6 +108,7 @@ Component.entryPoint = function(NS){
 	};
 	YAHOO.extend(Builder, Brick.mod.widget.Widget, {
 		init: function (dbContentId, cfg){
+
 			this.dbContentId = dbContentId;
 			this.cfg = cfg;
 			this.lastCommentId = 0;
@@ -124,10 +127,11 @@ Component.entryPoint = function(NS){
 			if (!L.isNull(this.manBlock)){
 				this.manBlock.builder = this;
 			}
-			
 			if (!L.isNull(cfg['data'])){
 				// чтение данных
 				var body = {}, data = cfg['data'];
+				var el = this.container;
+				
 				while(el.childNodes.length){
 					var t = el.childNodes[0];
 					if (t.childNodes.length == 3){
@@ -207,7 +211,7 @@ Component.entryPoint = function(NS){
 		renderList: function(data){
 			var GB = CommentBase[this.dbContentId],
 				TM = this._TM, TId = this._TId;
-			
+
 			var firstRender = this.count == 0;
 			
 			// сбросить все флаги нового комментария
