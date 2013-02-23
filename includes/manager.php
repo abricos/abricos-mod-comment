@@ -115,7 +115,12 @@ class CommentManager extends Ab_ModuleManager {
 		if (is_null($manager)){ return null; }
 		
 		// разрешает ли управляющий менеджер запись комментария
-		if (!$manager->IsCommentAppend($contentid)){
+		if (method_exists($manager, 'Comment_IsWrite')){
+			if (!$manager->Comment_IsWrite($contentid)){ return null; }
+		}else if (method_exists($manager, 'IsCommentAppend')){ // TODO: метод для поддрежки, подлежит удалению
+			if (!$manager->IsCommentAppend($contentid)){ return null; }
+		}else{
+			// нет проверочного метода, значит добавить комментарий нельзя 
 			return null;
 		}
 
@@ -130,8 +135,12 @@ class CommentManager extends Ab_ModuleManager {
 		$d->id = CommentQuery::Append($this->db, $contentid, $d);
 		$d->cid = $contentid;
 		
-		// возможно управляюищй менеджер отправит уведомление
-		$manager->CommentSendNotify($d);
+		// управляюищй менеджер отправит уведомление
+		if (method_exists($manager, 'Comment_SendNotify')){
+			$manager->Comment_SendNotify($d);
+		}else if (method_exists($manager, 'Comment_SendNotify')){ // TODO: метод для поддрежки, подлежит удалению
+			$manager->Comment_SendNotify($d);
+		}
 	}
 	
 	public function Preview($text){
@@ -159,7 +168,16 @@ class CommentManager extends Ab_ModuleManager {
 		if (is_null($manager)){ return null; }
 		
 		// разрешает ли управляющий менеджер получить список комментариев
-		if (!$manager->IsCommentList($contentid)){
+		if (method_exists($manager, 'Comment_IsViewList')){
+			if (!$manager->Comment_IsViewList($contentid)){
+				return null;
+			}
+		}else if (method_exists($manager, 'IsCommentList')){ // TODO: метод для поддрежки, подлежит удалению
+			if (!$manager->IsCommentList($contentid)){
+				return null;
+			}
+		}else{
+			// нет проверочного метода, значит добавить комментарий нельзя
 			return null;
 		}
 		

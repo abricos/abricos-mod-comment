@@ -337,7 +337,8 @@ Component.entryPoint = function(NS){
 				'event': function(request){
 					if (L.isFunction(callback)){ callback(); }
 					if (!request.data){ return; }
-					r = request.data;
+					var r = request.data;
+					
 					__self.lastView = r.lastview;
 					__self.renderList(r.list);
 					if (L.isFunction(__self.cfg['onLoadComments'])){
