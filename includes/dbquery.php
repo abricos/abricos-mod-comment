@@ -76,7 +76,36 @@ class CommentQuery {
 		return $db->insert_id();
 	}
 	
+	private static function CommentRatingSQLExt(Ab_Database $db){
+		$ret = new stdClass();
+		$ret->fld = "";
+		$ret->tbl = "";
+		$userid = Abricos::$user->id;
+		
+		if (BlogManager::$isURating && $userid>0){
+			$ret->fld .= "
+				,
+				IF(ISNULL(vc.voteval), 0, vc.voteval) as rtg,
+				IF(ISNULL(vc.votecount), 0, vc.votecount) as vcnt,
+				IF(ISNULL(vt.userid), null, IF(vt.voteup>0, 1, IF(vt.votedown>0, -1, 0))) as vmy
+			";
+			$ret->tbl .= "
+				LEFT JOIN ".$db->prefix."urating_vote vt
+					ON vt.module='comment'
+					AND vt.elementid=a.commentid
+					AND vt.userid=".bkint($userid)."
+				LEFT JOIN ".$db->prefix."urating_votecalc vc
+					ON vc.module='comment'
+					AND vc.elementid=a.commentid
+			";
+		}
+		return $ret;
+	}
+	
+	
 	public static function Comments(Ab_Database $db, $contentid, $lastid = 0){
+		$urt = CommentQuery::CommentRatingSQLExt($db);
+		
 		$sql = "
 			SELECT 
 				a.commentid as id, 
@@ -89,8 +118,10 @@ class CommentQuery {
 				u.avatar as avt,
 				u.firstname as fnm,
 				u.lastname as lnm
+				".$urt->fld."
 			FROM ".$db->prefix."cmt_comment a
 			LEFT JOIN ".$db->prefix."user u ON u.userid = a.userid
+			".$urt->tbl."
 			WHERE a.contentid =".bkint($contentid)." AND a.commentid > ".bkint($lastid)."
 			ORDER BY a.commentid 
 		";
@@ -98,6 +129,8 @@ class CommentQuery {
 	}
 	
 	public static function Comment(Ab_Database $db, $commentid, $contentid, $retarray = false){
+		$urt = CommentQuery::CommentRatingSQLExt($db);
+		
 		$sql = "
 			SELECT 
 				a.commentid as id, 
@@ -109,8 +142,10 @@ class CommentQuery {
 				u.avatar as avt,
 				u.firstname as fnm,
 				u.lastname as lnm
+				".$urt->fld."
 			FROM ".$db->prefix."cmt_comment a
 			LEFT JOIN ".$db->prefix."user u ON u.userid = a.userid
+			".$urt->tbl."
 			WHERE a.contentid =".bkint($contentid)." AND a.commentid = ".bkint($commentid)."
 			LIMIT 1
 		";

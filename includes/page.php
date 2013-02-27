@@ -50,4 +50,8 @@ if (Abricos::$user->id > 0){
 	$brick->param->var['ft'] = $brick->param->var['ftreg']; 
 }
 
+if (!empty($brick->param->param['voting'])){
+	$brick->param->var['voting'] = 'true';
+}
+
 ?>

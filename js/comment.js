@@ -96,7 +96,8 @@ Component.entryPoint = function(NS){
 			'lastView': -1,
 			'manBlock': null,
 			'debug': false,
-			'onLoadComments': null
+			'onLoadComments': null,
+			'voting': false
 		}, cfg || {});
 		
 		Builder.superclass.constructor.call(this, container, {
@@ -254,18 +255,20 @@ Component.entryPoint = function(NS){
 			this.renderCount();
 			
 			// установить голосовалку
-			if (NSUR.VotingWidget){
+			if (NSUR.VotingWidget && this.cfg['voting']){
 				
 				for (var id in GB){
+					var di = GB[id];
+
 					var elVote = Dom.get(TId['comment']['vote']+'-'+id);
 					if (L.isNull(elVote)){ continue; }
-
+					
 					new NSUR.VotingWidget(elVote, {
 						'modname': '{C#MODNAME}',
-						'elementType': 'comment',
+						'elementType': '',
 						'elementId': id,
-						// 'value': topic.rating,
-						// 'vote': topic.voteMy,
+						'value': di['rtg'],
+						'vote': di['uid'] == Brick.env.user.id ? 0 : di['vmy'],
 						'onVotingError': function(error, merror){
 							
 							var s = 'ERROR';

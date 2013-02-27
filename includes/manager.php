@@ -124,12 +124,13 @@ class CommentManager extends Ab_ModuleManager {
 	 * @param object $d данные комментария
 	 */
 	public function Append($contentid, $parentCommentId, $text){
+
 		if (empty($text)){ return null; }
 		if (!$this->IsWriteRole()){ return null; }
 
 		$manager = $this->ContentManager($contentid);
 		if (is_null($manager)){ return null; }
-		
+
 		// разрешает ли управляющий менеджер запись комментария
 		if (method_exists($manager, 'Comment_IsWrite')){
 			if (!$manager->Comment_IsWrite($contentid)){ return null; }
@@ -139,7 +140,7 @@ class CommentManager extends Ab_ModuleManager {
 			// нет проверочного метода, значит добавить комментарий нельзя 
 			return null;
 		}
-
+		
 		$utmanager = Abricos::TextParser();
 		
 		$text = $utmanager->Parser($text);
@@ -150,7 +151,7 @@ class CommentManager extends Ab_ModuleManager {
 		$d->uid = $this->userid; 
 		$d->id = CommentQuery::Append($this->db, $contentid, $d);
 		$d->cid = $contentid;
-		
+
 		// управляюищй менеджер отправит уведомление
 		if (method_exists($manager, 'Comment_SendNotify')){
 			$manager->Comment_SendNotify($d);
@@ -217,26 +218,11 @@ class CommentManager extends Ab_ModuleManager {
 	
 	public function CommentsWithLastView($contentid, $lastid = 0, $parentCommentId = 0, $newComment = ''){
 		if (!$this->IsViewRole()){ return null; }
-		$manager = $this->ContentManager($contentid);
-		
-		// разрешает ли управляющий менеджер получить список комментариев
-		if (method_exists($manager, 'Comment_IsViewList')){
-			if (!$manager->Comment_IsViewList($contentid)){
-				return null;
-			}
-		}else if (method_exists($manager, 'IsCommentList')){ // TODO: метод для поддрежки, подлежит удалению
-			if (!$manager->IsCommentList($contentid)){
-				return null;
-			}
-		}else{
-			// нет проверочного метода, значит добавить комментарий нельзя
-			return null;
-		}
 		
 		$ret = new stdClass();
 		$ret->list = $this->Comments($contentid, $lastid, $parentCommentId, $newComment, true);
 		$ret->lastview = -1;
-		if (empty($this->userid)){ return $ret; }
+		if (empty($this->userid) || empty($ret->list)){ return $ret; }
 		
 		$lv = CommentQuery::LastView($this->db, $this->userid, $contentid);
 		if (empty($lv)){
@@ -245,7 +231,6 @@ class CommentManager extends Ab_ModuleManager {
 			$ret->lastview = $lv['id'];
 			 CommentQuery::LastViewUpdate($this->db, $this->userid, $contentid, $this->_maxCommentId);
 		}
-		
 		
 		return $ret;
 	}
@@ -269,7 +254,7 @@ class CommentManager extends Ab_ModuleManager {
 	 * @param string $eltype
 	 */
 	public function URating_IsElementVoting(URatingUserReputation $uRep, $act, $elid, $eltype){
-		if ($eltype !='comment'){ return 99; }
+		if ($eltype != ''){ return 99; }
 		
 		$info = CommentQuery::CommentInfo($this->db, $elid);
 		if (empty($info)){ return 99; }

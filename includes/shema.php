@@ -15,20 +15,29 @@ $pfx = $db->prefix;
 if ($updateManager->isInstall()){
 	$db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."cmt_comment (
-		  `commentid` int(10) UNSIGNED NOT NULL auto_increment,
-		  `parentcommentid` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Комментарий родитель',
-		  `contentid` int(10) UNSIGNED NOT NULL,
-		  `userid` int(10) UNSIGNED NOT NULL,
-		  `dateline` int(10) UNSIGNED NOT NULL,
-		  `dateedit` int(10) UNSIGNED NOT NULL,
-		  `deldate` int(10) UNSIGNED NOT NULL DEFAULT '0',
-		  `body` text NOT NULL,
-		  `status` int(2) UNSIGNED NOT NULL DEFAULT '0',
-		  PRIMARY KEY  (`commentid`),
-		  KEY `dateedit` (`dateedit`),
-		  KEY `contentid` (`contentid`)
+			`commentid` int(10) UNSIGNED NOT NULL auto_increment,
+			`parentcommentid` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Комментарий родитель',
+			`contentid` int(10) UNSIGNED NOT NULL DEFAULT 0,
+			`userid` int(10) UNSIGNED NOT NULL DEFAULT 0,
+			`body` text NOT NULL,
+			`status` int(2) UNSIGNED NOT NULL DEFAULT 0,
+			
+			`dateline` int(10) UNSIGNED NOT NULL DEFAULT 0,
+			`dateedit` int(10) UNSIGNED NOT NULL DEFAULT 0,
+			`deldate` int(10) UNSIGNED NOT NULL DEFAULT 0,
+			PRIMARY KEY  (`commentid`),
+			KEY `dateedit` (`dateedit`),
+			KEY `contentid` (`contentid`)
 		)".$charset
 	);
+	
+	/*
+	`rating` int(10) NOT NULL DEFAULT 0 COMMENT 'Рейтинг',
+	`voteup` int(5) unsigned NOT NULL DEFAULT 0 COMMENT 'ЗА',
+	`votedown` int(5) unsigned NOT NULL DEFAULT 0 COMMENT 'ПРОТИВ',
+	`votecount` int(5) unsigned NOT NULL DEFAULT 0 COMMENT 'Кол-во всего',
+	`votedate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата пересчета',
+	/**/
 }
 
 if ($updateManager->isUpdate('0.3.1')){
@@ -51,23 +60,22 @@ if ($updateManager->isUpdate('0.3.2')){
 	);
 }
 
-if ($updateManager->isUpdate('0.3.5')){
-	// голосование за комментарий
+/*
+if ($updateManager->isUpdate('0.4') && !$updateManager->isInstall()){
+
+
 	$db->query_write("
-		CREATE TABLE IF NOT EXISTS ".$pfx."cmt_vote (
-			`commentid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Комментарий',
-			`userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Пользователь',
-			
-			`voteup` int(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Голос ЗА',
-			`votedown` int(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Голос ПРОТИВ',
-			
-			`dateline` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата голоса',
-			UNIQUE KEY `comment` (`commentid`,`userid`)
-		)".$charset
-	);
+		ALTER TABLE ".$pfx."bg_topic
+
+			ADD `rating` int(10) NOT NULL DEFAULT 0 COMMENT 'Рейтинг',
+			ADD `voteup` int(5) unsigned NOT NULL DEFAULT 0 COMMENT 'ЗА',
+			ADD `votedown` int(5) unsigned NOT NULL DEFAULT 0 COMMENT 'ПРОТИВ',
+			ADD `votecount` int(5) unsigned NOT NULL DEFAULT 0 COMMENT 'Кол-во всего',
+			ADD `votedate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата пересчета'
+	");
+
 }
 
-
-
+/**/
 
 ?>
