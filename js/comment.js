@@ -1,5 +1,4 @@
 /*
-@version $Id$
 @copyright Copyright (C) 2008 Abricos All rights reserved.
 @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
 */
@@ -13,6 +12,7 @@ var Component = new Brick.Component();
 Component.requires = {
 	yahoo: ['dom'],
 	mod:[
+        {name: 'urating', files: ['vote.js']},
 		{name: 'user', files: ['permission.js']},
 		{name: 'widget', files: ['lib.js']},
 		{name: 'uprofile', files: ['viewer.js']}
@@ -24,23 +24,20 @@ Component.entryPoint = function(NS){
 		E = YAHOO.util.Event,
 		L = YAHOO.lang;
 	
-	var UP = Brick.mod.uprofile;
+	var UP = Brick.mod.uprofile,
+		buildTemplate = this.buildTemplate,
+		NSUR = Brick.mod.urating || {};
 	
-	var buildTemplate = this.buildTemplate;
-	
-	// загрузка роли пользователя
-	var isViewRole = false,
-		isWriteRole = false,
-		isAdminRole = false;
-	
-	var loadRoles = function(callback){
-		var P = Brick.Permission;
-		P.load(function(){
-			isViewRole = P.check('comment', '10') == 1;
-			isWriteRole = P.check('comment', '20') == 1;
-			isAdminRole = P.check('comment', '50') == 1;
-			callback();
-		});
+	var BP = Brick.Permission;
+	var R = NS.roles = {
+		load: function(callback){
+			BP.load(function(){
+				NS.roles['isAdmin'] = BP.check('{C#MODNAME}', '50') == 1;
+				NS.roles['isWrite'] = BP.check('{C#MODNAME}', '20') == 1;
+				NS.roles['isView'] = BP.check('{C#MODNAME}', '10') == 1;
+				callback();
+			});
+		}
 	};
 	
 	var aTargetBlank = function(el){
@@ -121,7 +118,7 @@ Component.entryPoint = function(NS){
 				CommentBase[dbContentId] = {};
 			}
 			this.lastView = cfg['lastView'];
-			this.readOnly = !isWriteRole ? true : cfg['readOnly'];
+			this.readOnly = !R['isWrite'] ? true : cfg['readOnly'];
 			this.manBlock = cfg['manBlock'];
 			
 			if (!L.isNull(this.manBlock)){
@@ -256,6 +253,36 @@ Component.entryPoint = function(NS){
 			}
 			this.renderCount();
 			
+			// установить голосовалку
+			if (NSUR.VotingWidget){
+				
+				for (var id in GB){
+					var elVote = Dom.get(TId['comment']['vote']+'-'+id);
+					if (L.isNull(elVote)){ continue; }
+
+					new NSUR.VotingWidget(elVote, {
+						'modname': '{C#MODNAME}',
+						'elementType': 'comment',
+						'elementId': id,
+						// 'value': topic.rating,
+						// 'vote': topic.voteMy,
+						'onVotingError': function(error, merror){
+							
+							var s = 'ERROR';
+							/*
+							if (merror > 0){
+								s = LNG.get('topic.vote.error.m.'+merror);
+							}else if (error == 1){
+								s = LNG.get('topic.vote.error.'+error);
+							}else{
+								return;
+							}/**/
+							Brick.mod.widget.notice.show(s);						
+						}
+					});
+				}
+			}
+			
 			setTimeout(function(){
 				for (var id in GB){
 					try{
@@ -263,7 +290,6 @@ Component.entryPoint = function(NS){
 					}catch(e){}
 				}
 			}, 1000);
-
 		},
 		
 		/**
@@ -361,7 +387,7 @@ Component.entryPoint = function(NS){
 	NS.Builder = Builder;
 	
 	NS.API.buildCommentTree = function(oArgs){
-		loadRoles(function(){
+		R.load(function(){
 			var b = new Builder(oArgs.container, oArgs.dbContentId, oArgs.config);
 			if (L.isFunction(oArgs['instanceCallback'])){
 				oArgs.instanceCallback(b);

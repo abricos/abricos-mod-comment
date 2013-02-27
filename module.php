@@ -18,7 +18,7 @@ class CommentModule extends Ab_Module{
 	private $_manager = null;
 	
 	function __construct(){
-		$this->version = "0.3.4";
+		$this->version = "0.4";
 		$this->name = "comment";
 		
 		$this->permission = new CommentPermission($this);
@@ -44,31 +44,31 @@ class CommentAction {
 	const ADMIN = 50;
 }
 
-class CommentPermission extends CMSPermission {
-	
-	public function CommentPermission(CommentModule $module){
-		$defRoles = array(
-			new CMSRole(CommentAction::VIEW, 1, User::UG_GUEST),
-			new CMSRole(CommentAction::VIEW, 1, User::UG_REGISTERED),
-			new CMSRole(CommentAction::VIEW, 1, User::UG_ADMIN),
+class CommentPermission extends Ab_UserPermission {
 
-			new CMSRole(CommentAction::WRITE, 1, User::UG_REGISTERED),
-			new CMSRole(CommentAction::WRITE, 1, User::UG_ADMIN),
-			
-			new CMSRole(CommentAction::ADMIN, 1, User::UG_ADMIN)
+	public function CommentPermission(CommentModule $module){
+
+		$defRoles = array(
+			new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::GUEST),
+			new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::REGISTERED),
+			new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::ADMIN),
+
+			new Ab_UserRole(CommentAction::WRITE, Ab_UserGroup::ADMIN),
+
+			new Ab_UserRole(CommentAction::ADMIN, Ab_UserGroup::ADMIN),
 		);
-		parent::CMSPermission($module, $defRoles);
+
+		parent::__construct($module, $defRoles);
 	}
-	
+
 	public function GetRoles(){
 		return array(
 			CommentAction::VIEW => $this->CheckAction(CommentAction::VIEW),
 			CommentAction::WRITE => $this->CheckAction(CommentAction::WRITE),
-			CommentAction::ADMIN => $this->CheckAction(CommentAction::ADMIN) 
+			CommentAction::ADMIN => $this->CheckAction(CommentAction::ADMIN)
 		);
 	}
 }
-
 Abricos::ModuleRegister(new CommentModule());
 
 ?>

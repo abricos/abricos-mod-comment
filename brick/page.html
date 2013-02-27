@@ -8,23 +8,23 @@
 [bkvar=lid]0[/bkvar]
 [mcss=comment]comment.css[/mcss]
 [*]-->
-<div id="mod-comment-data-[bkvar]cid[/bkvar]"><a id="comments" name="comments"></a>
+<div id="aw-comment-data-[bkvar]cid[/bkvar]"><a id="comments" name="comments"></a>
 	[bkvar]lst[/bkvar]
 </div>
-<div id="mod-comment-manblock-[bkvar]cid[/bkvar]"></div>
+<div id="aw-comment-manblock-[bkvar]cid[/bkvar]"></div>
 <script language='JavaScript' type='text/javascript' charset='utf-8'>
 	var d = [];
 	[bkvar]slst[/bkvar]
 
 	Brick.ff('comment', 'comment', function(){
 		Brick.mod.comment.API.buildCommentTree({
-			'container': 'mod-comment-data-[bkvar]cid[/bkvar]',
+			'container': 'aw-comment-data-[bkvar]cid[/bkvar]',
 			'dbContentId': [bkvar]cid[/bkvar],
 			'config': {
 				'lastView': [bkvar]lid[/bkvar],
 				'data': d,
 				'manBlock': new Brick.mod.comment.ManagerBlockWidget(
-					'mod-comment-manblock-[bkvar]cid[/bkvar]',
+					'aw-comment-manblock-[bkvar]cid[/bkvar]',
 					'position: fixed; right: 0px; top: 43%;'
 				)
 			}

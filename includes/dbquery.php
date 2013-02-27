@@ -1,11 +1,9 @@
 <?php
 /**
- * @version $Id$
  * @package Abricos
- * @subpackage Forum
- * @copyright Copyright (C) 2008 Abricos. All rights reserved.
+ * @subpackage Comment
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- * @author Alexander Kuzmin (roosit@abricos.org)
+ * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
 class CommentQuery {
@@ -117,6 +115,22 @@ class CommentQuery {
 			LIMIT 1
 		";
 		return $retarray ? $db->query_first($sql) : $db->query_read($sql);
+	}
+	
+	public static function CommentInfo(Ab_Database $db, $commentid){
+		$sql = "
+			SELECT 
+				cmt.commentid as id,
+				cmt.userid as uid,
+				cmt.contentid as ctid,
+				ct.modman as m,
+				ct.body as bd
+			FROM ".$db->prefix."cmt_comment cmt
+			LEFT JOIN ".$db->prefix."content ct ON cmt.contentid = ct.contentid
+			WHERE cmt.commentid = ".bkint($commentid)."
+			LIMIT 1
+		";
+		return $db->query_first($sql);
 	}
 	
 	public static function LastView(Ab_Database $db, $userid, $contentid){

@@ -1,43 +1,53 @@
-<!--{panel}--><div id="mod-comment" class="mod-comment">
-	<h2 class="mcmt-title">{#mod.comment.new.panel.hd}<span id="{i#count}">(0)</span> 
-		<a href="#" title="{#mod.comment.new.panel.refresh}" id="{i#refresh}" style="display: none;">
-			<img id="{i#refreshimg}" alt="{#mod.comment.new.panel.refresh}" src="/images/refresh.png" />
-		</a>
-	</h2>
-	<div id="{i#list}"></div>
-	<div class="info">
-		<div id="{i#replycont}">
-			<a id="{i#breplyroot}" href="#" title="{#mod.comment.comment.panel.1}">{#mod.comment.new.panel.writecom}</a>
+<!--{panel}-->
+<div id="{i#id}" class="aw-comment">
+	<div class="comments">
+		<div class="cmtshd">{#mod.comment.new.panel.hd}<span id="{i#count}">(0)</span> 
+			<a href="#" title="{#mod.comment.new.panel.refresh}" id="{i#refresh}" style="display: none;">
+				<img id="{i#refreshimg}" alt="{#mod.comment.new.panel.refresh}" src="/images/refresh.png" />
+			</a>
 		</div>
-		<div id="{i#reply}"></div>
-		<span id="{i#replyrootnone}">{#mod.comment.new.panel.note}</span>
+		<div id="{i#list}" class="cmtsbd"></div>
+		<div class="cmtsft info">
+			<div id="{i#replycont}">
+				<a id="{i#breplyroot}" href="#" title="{#mod.comment.comment.panel.1}">{#mod.comment.new.panel.writecom}</a>
+			</div>
+			<div id="{i#reply}"></div>
+			<span id="{i#replyrootnone}">{#mod.comment.new.panel.note}</span>
+		</div>
 	</div>
 </div>
+
 <!--{spam}--><strong>{#mod.comment.new.spam}</strong>
 <!--{list}--><ul id="{i#id}-{v#id}">{v#list}</ul>
-<!--{comment}--><li class="item" id="{i#id}-{v#id}">
-	<div class="meta" id="{i#meta}-{v#id}">
-		<a title="{v#unm}" href="#" class="show-user-profile user-{v#uid}">
-			{v#avt}
-		</a>
-		<div style="display: inline; margin-left: 10px; vertical-align: top">
-			<a class="username show-user-profile user-{v#uid}" href="#">{v#unm}</a>
-			<abbr title="{v#de}">{v#de}</abbr>
-			<a href="#" title="{#mod.comment.new.comment}" style="display: none">#</a>
+
+<!--{comment}-->
+<li class="cmtitem" id="{i#id}-{v#id}">
+	<div class="cmthd" id="{i#meta}-{v#id}">
+		<div id="{i#vote}-{v#id}" class="cmtvote"></div>
+		<div class="user aw-uprofile">
+			<a title="{v#unm}" href="#" class="avtr tmb tmb45 show-user-profile user-{v#uid}">
+				{v#avt}
+			</a>
+			<a class="unm show-user-profile user-{v#uid}" href="#">{v#unm}</a>
 		</div>
-		<br style="clear: both" />
+		<div class="date">
+			<span title="{v#de}">{v#de}</span>
+		</div>
+		<div class="clear"></div>
 	</div>
-	<div class="content">
-		<div class="tl"><div class="tb"><div class="tr"></div></div>
-		</div>
+	<div class="cmtbd">
+		<div class="tl"><div class="tb"><div class="tr"></div></div></div>
 		<div id="{i#bd}-{v#id}" class="text aw-page-content">
 			{v#bd}
 		</div>
 		<div class="bl"><div class="bb"><div class="br"></div></div></div>
 	</div>
-	{v#reply}
-	<div id="{i#child}-{v#id}"></div>
+	<div class="cmtft">
+		{v#reply}
+		<div id="{i#child}-{v#id}"></div>
+	</div>
 </li>
+
 <!--{reply}--><p id="{i#contbtn}-{v#id}"><a href="#" id="{i#id}-{v#id}">{#mod.comment.new.reply}</a></p>
 <div id="{i#reply}-{v#id}"></div>
 <!--{replypanel}--><div id="{i#preview}" style="padding: 3px;"></div>
@@ -56,7 +66,7 @@
 	</div>
 </td>
 </tr></tbody></table>
-<!--{manblock}--><ul id="{i#id}" class="mod-comment-manblock" style="{v#pos}">
+<!--{manblock}--><ul id="{i#id}" class="aw-comment-manblock" style="{v#pos}">
 	<li>
 		<div>
 			<a id="{i#brefresh}" class="button" href="#comments" title="{#mod.comment.comment.manblock.1}"></a>

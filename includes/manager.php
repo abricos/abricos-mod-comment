@@ -1,11 +1,9 @@
 <?php
 /**
- * @version $Id$
  * @package Abricos
- * @subpackage Bopros
- * @copyright Copyright (C) 2008 Abricos. All rights reserved.
+ * @subpackage Comment
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- * @author Alexander Kuzmin (roosit@abricos.org)
+ * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
 require_once 'dbquery.php';
@@ -13,13 +11,28 @@ require_once 'dbquery.php';
 class CommentManager extends Ab_ModuleManager {
 
 	/**
-	 * 
 	 * @var CommentModule
 	 */
 	public $module = null;
+
+	/**
+	 * @var CommentManager
+	 */
+	public static $instance;
+	
+	/**
+	 * Установлен ли модуль рейтинга?
+	 * @var boolean
+	 */
+	public static $isURating = false;
 	
 	public function __construct(CommentModule $module){
 		parent::__construct($module);
+		
+		CommentManager::$instance = $this;
+		
+		$modURating = Abricos::GetModule("urating");
+		CommentManager::$isURating = !empty($modURating);
 	}
 	
 	public function IsAdminRole(){
@@ -27,10 +40,12 @@ class CommentManager extends Ab_ModuleManager {
 	}
 	
 	public function IsWriteRole(){
+		if ($this->IsAdminRole()){ return true; }
 		return $this->IsRoleEnable(CommentAction::WRITE);
 	}
 	
 	public function IsViewRole(){
+		if ($this->IsWriteRole()){ return true; }
 		return $this->IsRoleEnable(CommentAction::VIEW);
 	}
 	
@@ -67,6 +82,7 @@ class CommentManager extends Ab_ModuleManager {
 		}
 		return null;
 	}
+	
 	/**
 	 * Вернуть указатель на полный список комментариев.
 	 * 
@@ -200,6 +216,23 @@ class CommentManager extends Ab_ModuleManager {
 	}
 	
 	public function CommentsWithLastView($contentid, $lastid = 0, $parentCommentId = 0, $newComment = ''){
+		if (!$this->IsViewRole()){ return null; }
+		$manager = $this->ContentManager($contentid);
+		
+		// разрешает ли управляющий менеджер получить список комментариев
+		if (method_exists($manager, 'Comment_IsViewList')){
+			if (!$manager->Comment_IsViewList($contentid)){
+				return null;
+			}
+		}else if (method_exists($manager, 'IsCommentList')){ // TODO: метод для поддрежки, подлежит удалению
+			if (!$manager->IsCommentList($contentid)){
+				return null;
+			}
+		}else{
+			// нет проверочного метода, значит добавить комментарий нельзя
+			return null;
+		}
+		
 		$ret = new stdClass();
 		$ret->list = $this->Comments($contentid, $lastid, $parentCommentId, $newComment, true);
 		$ret->lastview = -1;
@@ -212,9 +245,68 @@ class CommentManager extends Ab_ModuleManager {
 			$ret->lastview = $lv['id'];
 			 CommentQuery::LastViewUpdate($this->db, $this->userid, $contentid, $this->_maxCommentId);
 		}
-		 
+		
+		
 		return $ret;
 	}
+	
+	
+	/**
+	 * Можно ли проголосовать текущему пользователю за комментарий
+	 *
+	 * Метод вызывается из модуля URating
+	 *
+	 * Возвращает код ошибки:
+	 *  0 - все нормально, голосовать можно,
+	 *  2 - голосовать можно только с положительным рейтингом,
+	 *  3 - недостаточно голосов (закончились голоса),
+	 *  4 - нельзя голосовать за свой комментарий,
+	 *  5 - закончился период для голосования
+	 *
+	 * @param URatingUserReputation $uRep
+	 * @param string $act
+	 * @param integer $userid
+	 * @param string $eltype
+	 */
+	public function URating_IsElementVoting(URatingUserReputation $uRep, $act, $elid, $eltype){
+		if ($eltype !='comment'){ return 99; }
+		
+		$info = CommentQuery::CommentInfo($this->db, $elid);
+		if (empty($info)){ return 99; }
+		
+		if ($info['uid'] == $this->user->id){
+			return 4;
+		}
+		
+		$module = Abricos::GetModule($info['m']);
+		if (empty($module)){ return 99; }
+		
+		$manager = $module->GetManager();
+		if (empty($manager)){ return 99; }
+		
+		if ($this->IsAdminRole()){ // админу можно голосовать всегда
+			return 0;
+		}
+		
+		if ($uRep->reputation < 1){ // голосовать можно только с положительным рейтингом
+			return 2;
+		}
+		
+		$votes = URatingManager::$instance->UserVoteCountByDay();
+		
+		// кол-во голосов за комментарий = кол-ву репутации умноженной на 2
+		$voteRepCount = intval($votes['comment']);
+		if ($uRep->reputation*2 <= $voteRepCount){
+			return 3;
+		}
+		
+		// разрешает ли управляющий менеджер голосовать за комментарий
+		if (!method_exists($manager, 'Comment_IsVoting')){
+			return 99;
+		}
+		
+		return $manager->Comment_IsVoting($uRep, $act, $elid, $info['ctid']);
+	}	
 }
 
 ?>
