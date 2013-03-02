@@ -19,6 +19,9 @@
 .aw-comment .cmtitem .cmtvote {
 	float: right;
 }
+.aw-comment .cmtitem {
+	margin-bottom: 20px;
+}
 .aw-comment .cmtitem .user,
 .aw-comment .cmtitem .date {
 	float: left;
