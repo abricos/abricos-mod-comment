@@ -53,6 +53,7 @@ class CommentPermission extends Ab_UserPermission {
 			new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::REGISTERED),
 			new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::ADMIN),
 
+			new Ab_UserRole(CommentAction::WRITE, Ab_UserGroup::REGISTERED),
 			new Ab_UserRole(CommentAction::WRITE, Ab_UserGroup::ADMIN),
 
 			new Ab_UserRole(CommentAction::ADMIN, Ab_UserGroup::ADMIN),
