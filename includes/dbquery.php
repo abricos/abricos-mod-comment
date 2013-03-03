@@ -81,13 +81,14 @@ class CommentQuery {
 		$ret->fld = "";
 		$ret->tbl = "";
 		$userid = Abricos::$user->id;
+		$votePeriod = TIMENOW-60*60*24*31;
 		
 		if (BlogManager::$isURating && $userid>0){
 			$ret->fld .= "
 				,
 				IF(ISNULL(vc.voteval), 0, vc.voteval) as rtg,
 				IF(ISNULL(vc.votecount), 0, vc.votecount) as vcnt,
-				IF(ISNULL(vt.userid), null, IF(vt.voteup>0, 1, IF(vt.votedown>0, -1, 0))) as vmy
+				IF(a.dateline<".$votePeriod.", 0, IF(ISNULL(vt.userid), null, IF(vt.voteup>0, 1, IF(vt.votedown>0, -1, 0)))) as vmy
 			";
 			$ret->tbl .= "
 				LEFT JOIN ".$db->prefix."urating_vote vt

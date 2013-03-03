@@ -26,6 +26,7 @@ Component.entryPoint = function(NS){
 	
 	var UP = Brick.mod.uprofile,
 		buildTemplate = this.buildTemplate,
+		LNG = this.language,
 		NSUR = Brick.mod.urating || {};
 	
 	var BP = Brick.Permission;
@@ -270,16 +271,14 @@ Component.entryPoint = function(NS){
 						'value': di['rtg'],
 						'vote': di['uid'] == Brick.env.user.id ? 0 : di['vmy'],
 						'onVotingError': function(error, merror){
-							
 							var s = 'ERROR';
-							/*
 							if (merror > 0){
-								s = LNG.get('topic.vote.error.m.'+merror);
+								s = LNG.get('comment.vote.error.m.'+merror);
 							}else if (error == 1){
-								s = LNG.get('topic.vote.error.'+error);
+								s = LNG.get('comment.vote.error.'+error);
 							}else{
 								return;
-							}/**/
+							}
 							Brick.mod.widget.notice.show(s);						
 						}
 					});
