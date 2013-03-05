@@ -83,7 +83,7 @@ class CommentQuery {
 		$userid = Abricos::$user->id;
 		$votePeriod = TIMENOW-60*60*24*31;
 		
-		if (BlogManager::$isURating && $userid>0){
+		if (CommentManager::$isURating && $userid>0){
 			$ret->fld .= "
 				,
 				IF(ISNULL(vc.voteval), 0, vc.voteval) as rtg,
