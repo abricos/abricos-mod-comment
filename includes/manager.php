@@ -155,8 +155,8 @@ class CommentManager extends Ab_ModuleManager {
 		// управляюищй менеджер отправит уведомление
 		if (method_exists($manager, 'Comment_SendNotify')){
 			$manager->Comment_SendNotify($d);
-		}else if (method_exists($manager, 'Comment_SendNotify')){ // TODO: метод для поддрежки, подлежит удалению
-			$manager->Comment_SendNotify($d);
+		}else if (method_exists($manager, 'CommentSendNotify')){ // TODO: метод для поддрежки, подлежит удалению
+			$manager->CommentSendNotify($d);
 		}
 	}
 	
