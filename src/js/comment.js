@@ -40,8 +40,20 @@ Component.entryPoint = function(NS){
 			});
 		}
 	};
-	
-	var aTargetBlank = function(el){
+
+    /**
+     * Удалить все дочернии элементы Dom элемента
+     * @method elClear
+     * @static
+     * @param {Object} el Dom элемент
+     */
+    Brick.elClear = function(el){
+        while(el.childNodes.length){
+            el.removeChild(el.childNodes[0]);
+        }
+    };
+
+    var aTargetBlank = function(el){
 		if (!el || L.isNull(el)){ return; }
 		if (el.tagName == 'A'){
 			el.target = "_blank";
