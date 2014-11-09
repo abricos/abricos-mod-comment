@@ -13,14 +13,19 @@ Component.requires = {
 	yahoo: ['dom'],
 	mod:[
         {name: 'urating', files: ['vote.js']},
-		{name: 'user', files: ['permission.js']},
 		{name: 'widget', files: ['lib.js']},
 		{name: 'uprofile', files: ['viewer.js']}
     ]
 };
 Component.entryPoint = function(NS){
 
-	var Dom = YAHOO.util.Dom,
+    NS.roles = new Brick.AppRoles('{C#MODNAME}', {
+        isAdmin: 50,
+        isWrite: 20,
+        isView: 10
+    });
+
+    var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
 		L = YAHOO.lang;
 	
@@ -29,17 +34,7 @@ Component.entryPoint = function(NS){
 		LNG = this.language,
 		NSUR = Brick.mod.urating || {};
 	
-	var BP = Brick.Permission;
-	var R = NS.roles = {
-		load: function(callback){
-			BP.load(function(){
-				NS.roles['isAdmin'] = BP.check('{C#MODNAME}', '50') == 1;
-				NS.roles['isWrite'] = BP.check('{C#MODNAME}', '20') == 1;
-				NS.roles['isView'] = BP.check('{C#MODNAME}', '10') == 1;
-				callback();
-			});
-		}
-	};
+	var R = NS.roles;
 
     /**
      * Удалить все дочернии элементы Dom элемента
