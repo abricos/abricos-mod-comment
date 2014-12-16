@@ -22,6 +22,7 @@ class CommentManager extends Ab_ModuleManager {
 
     /**
      * Установлен ли модуль рейтинга?
+     *
      * @var boolean
      */
     public static $isURating = false;
@@ -119,6 +120,7 @@ class CommentManager extends Ab_ModuleManager {
 
     /**
      * Получить менеджер, управляющий списком комментариев по идентификатору контента
+     *
      * @param integer $contentid идентификатор контента
      */
     private function ContentManager($contentid) {
@@ -201,6 +203,7 @@ class CommentManager extends Ab_ModuleManager {
 
     /**
      * Получить список комментариев
+     *
      * @param integer $contentId идентификатор контента
      * @param integer $lastid последний передаваемый идентификатор (для подзагрузки новых)
      */

@@ -43,7 +43,7 @@ Component.entryPoint = function(NS){
      * @param {Object} el Dom элемент
      */
     Brick.elClear = function(el){
-        while (el.childNodes.length) {
+        while (el.childNodes.length){
             el.removeChild(el.childNodes[0]);
         }
     };
@@ -142,7 +142,7 @@ Component.entryPoint = function(NS){
                 var body = {}, data = cfg['data'];
                 var el = this.container;
 
-                while (el.childNodes.length) {
+                while (el.childNodes.length){
                     var t = el.childNodes[0];
                     if (t.childNodes.length == 3){
                         body[t.childNodes[0].innerHTML] = t.childNodes[2].innerHTML;

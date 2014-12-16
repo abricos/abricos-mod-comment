@@ -1,79 +1,96 @@
 <!--{panel}-->
 <div id="{i#id}" class="aw-comment">
-	<div class="comments">
-		<div class="cmtshd">{#mod.comment.new.panel.hd}<span id="{i#count}">(0)</span> 
-			<a href="#" title="{#mod.comment.new.panel.refresh}" id="{i#refresh}" style="display: none;">
-				<img id="{i#refreshimg}" alt="{#mod.comment.new.panel.refresh}" src="/images/refresh.png" />
-			</a>
-		</div>
-		<div id="{i#list}" class="cmtsbd"></div>
-		<div class="cmtsft info">
-			<div id="{i#replycont}">
-				<a id="{i#breplyroot}" href="#" title="{#mod.comment.comment.panel.1}">{#mod.comment.new.panel.writecom}</a>
-			</div>
-			<div id="{i#reply}"></div>
-			<span id="{i#replyrootnone}">{#mod.comment.new.panel.note}</span>
-		</div>
-	</div>
+    <div class="comments">
+        <div class="cmtshd">{#mod.comment.new.panel.hd}<span id="{i#count}">(0)</span>
+            <a href="#" title="{#mod.comment.new.panel.refresh}" id="{i#refresh}" style="display: none;">
+                <img id="{i#refreshimg}" alt="{#mod.comment.new.panel.refresh}" src="/images/refresh.png"/>
+            </a>
+        </div>
+        <div id="{i#list}" class="cmtsbd"></div>
+        <div class="cmtsft info">
+            <div id="{i#replycont}">
+                <a id="{i#breplyroot}" href="#"
+                   title="{#mod.comment.comment.panel.1}">{#mod.comment.new.panel.writecom}</a>
+            </div>
+            <div id="{i#reply}"></div>
+            <span id="{i#replyrootnone}">{#mod.comment.new.panel.note}</span>
+        </div>
+    </div>
 </div>
 
 <!--{spam}--><strong>{#mod.comment.new.spam}</strong>
-<!--{list}--><ul id="{i#id}-{v#id}">{v#list}</ul>
+<!--{list}-->
+<ul id="{i#id}-{v#id}">{v#list}</ul>
 
 <!--{comment}-->
 <li class="cmtitem" id="{i#id}-{v#id}">
-	<div class="cmthd" id="{i#meta}-{v#id}">
-		<div id="{i#vote}-{v#id}" class="cmtvote"></div>
-		<div class="user aw-uprofile">
-			<a title="{v#unm}" href="#" class="avtr tmb tmb45 show-user-profile user-{v#uid}">
-				{v#avt}
-			</a>
-			<a class="unm show-user-profile user-{v#uid}" href="#">{v#unm}</a>
-		</div>
-		<div class="date">
-			<span title="{v#de}">{v#de}</span>
-		</div>
-		<div class="clearfix"></div>
-	</div>
-	<div class="cmtbd">
-		<div class="tl"><div class="tb"><div class="tr"></div></div></div>
-		<div id="{i#bd}-{v#id}" class="text aw-page-content">
-			{v#bd}
-		</div>
-		<div class="bl"><div class="bb"><div class="br"></div></div></div>
-	</div>
-	<div class="cmtft">
-		{v#reply}
-		<div id="{i#child}-{v#id}"></div>
-	</div>
+    <div class="cmthd" id="{i#meta}-{v#id}">
+        <div id="{i#vote}-{v#id}" class="cmtvote"></div>
+        <div class="user aw-uprofile">
+            <a title="{v#unm}" href="#" class="avtr tmb tmb45 show-user-profile user-{v#uid}">
+                {v#avt}
+            </a>
+            <a class="unm show-user-profile user-{v#uid}" href="#">{v#unm}</a>
+        </div>
+        <div class="date">
+            <span title="{v#de}">{v#de}</span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="cmtbd">
+        <div class="tl">
+            <div class="tb">
+                <div class="tr"></div>
+            </div>
+        </div>
+        <div id="{i#bd}-{v#id}" class="text aw-page-content">
+            {v#bd}
+        </div>
+        <div class="bl">
+            <div class="bb">
+                <div class="br"></div>
+            </div>
+        </div>
+    </div>
+    <div class="cmtft">
+        {v#reply}
+        <div id="{i#child}-{v#id}"></div>
+    </div>
 </li>
 
 <!--{reply}--><p id="{i#contbtn}-{v#id}"><a href="#" id="{i#id}-{v#id}">{#mod.comment.new.reply}</a></p>
 <div id="{i#reply}-{v#id}"></div>
-<!--{replypanel}--><div id="{i#preview}" style="padding: 3px;"></div>
+<!--{replypanel}-->
+<div id="{i#preview}" style="padding: 3px;"></div>
 <textarea id="{i#editor}" style="width: 550px; height: 200px"></textarea>
-<table><tbody><tr>
-<td>
-	<div id="{i#buttons}" style="margin: 5px;">	
-		<input type="button" id="{i#bpreview}" value="{#mod.comment.new.replypanel.preview}" class="btn"/>
-		<input type="button" id="{i#bsend}" value="{#mod.comment.new.replypanel.sendcom}" class="btn" />
-		<input type="button" id="{i#bcancel}" value="{#mod.comment.new.replypanel.cancel}" class="btn" />
-	</div>
-</td>
-<td>
-	<div id="{i#wait}" style="margin: 9px; display: none;" >
-		<img src="/images/loading.gif" /> Отправляю данные...
-	</div>
-</td>
-</tr></tbody></table>
-<!--{manblock}--><ul id="{i#id}" class="aw-comment-manblock" style="{v#pos}">
-	<li>
-		<div>
-			<a id="{i#brefresh}" class="button" href="#comments" title="{#mod.comment.comment.manblock.1}"></a>
-			<div id="{i#newblock}" class="newcomments" style="display: none;">
-				<div class="divider"></div>
-				<a id="{i#bcount}" class="count" href="#" title="{#mod.comment.comment.manblock.2}">1</a>
-			</div>
-		</div>
-	</li>
+<table>
+    <tbody>
+    <tr>
+        <td>
+            <div id="{i#buttons}" style="margin: 5px;" class="btn-toolbar">
+                <input type="button" id="{i#bpreview}" value="{#mod.comment.new.replypanel.preview}" class="btn btn-default"/>
+                <input type="button" id="{i#bsend}" value="{#mod.comment.new.replypanel.sendcom}" class="btn btn-default"/>
+                <input type="button" id="{i#bcancel}" value="{#mod.comment.new.replypanel.cancel}" class="btn btn-default"/>
+            </div>
+        </td>
+        <td>
+            <div id="{i#wait}" style="margin: 9px; display: none;">
+                <img src="/images/loading.gif"/> Отправляю данные...
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!--{manblock}-->
+<ul id="{i#id}" class="aw-comment-manblock" style="{v#pos}">
+    <li>
+        <div>
+            <a id="{i#brefresh}" class="button" href="#comments" title="{#mod.comment.comment.manblock.1}"></a>
+
+            <div id="{i#newblock}" class="newcomments" style="display: none;">
+                <div class="divider"></div>
+                <a id="{i#bcount}" class="count" href="#" title="{#mod.comment.comment.manblock.2}">1</a>
+            </div>
+        </div>
+    </li>
 </ul>

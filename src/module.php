@@ -10,6 +10,7 @@
 
 /**
  * Модуль "Комментарии"
+ *
  * @package Abricos
  * @subpackage Comment
  */
@@ -18,7 +19,7 @@ class CommentModule extends Ab_Module {
     private $_manager = null;
 
     function __construct() {
-        $this->version = "0.4.1";
+        $this->version = "0.4.2";
         $this->name = "comment";
 
         $this->permission = new CommentPermission($this);
