@@ -2,7 +2,8 @@
 /**
  * @package Abricos
  * @subpackage Comment
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @copyright 2008-2015 Alexander Kuzmin
+ * @license http://opensource.org/licenses/mit-license.php MIT License
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
@@ -27,7 +28,7 @@ class CommentManager extends Ab_ModuleManager {
      */
     public static $isURating = false;
 
-    public function __construct(CommentModule $module) {
+    public function __construct(CommentModule $module){
         parent::__construct($module);
 
         CommentManager::$instance = $this;
@@ -36,31 +37,31 @@ class CommentManager extends Ab_ModuleManager {
         CommentManager::$isURating = !empty($modURating);
     }
 
-    public function IsAdminRole() {
+    public function IsAdminRole(){
         return $this->IsRoleEnable(CommentAction::ADMIN);
     }
 
-    public function IsWriteRole() {
-        if ($this->IsAdminRole()) {
+    public function IsWriteRole(){
+        if ($this->IsAdminRole()){
             return true;
         }
         return $this->IsRoleEnable(CommentAction::WRITE);
     }
 
-    public function IsViewRole() {
-        if ($this->IsWriteRole()) {
+    public function IsViewRole(){
+        if ($this->IsWriteRole()){
             return true;
         }
         return $this->IsRoleEnable(CommentAction::VIEW);
     }
 
-    public function DSProcess($name, $rows) {
+    public function DSProcess($name, $rows){
         $p = $rows->p;
-        switch ($name) {
+        switch ($name){
             case 'fulllist':
-                foreach ($rows->r as $r) {
-                    if ($r->f == 'u') {
-                        if ($r->d->act == 'status') {
+                foreach ($rows->r as $r){
+                    if ($r->f == 'u'){
+                        if ($r->d->act == 'status'){
                             $this->ChangeStatus($r->d->id, $r->d->st);
                         }
                     }
@@ -69,9 +70,9 @@ class CommentManager extends Ab_ModuleManager {
         }
     }
 
-    public function DSGetData($name, $rows) {
+    public function DSGetData($name, $rows){
         $p = $rows->p;
-        switch ($name) {
+        switch ($name){
             case 'fulllist':
                 return $this->FullList($p->page, $p->limit);
             case 'fulllistcount':
@@ -80,8 +81,8 @@ class CommentManager extends Ab_ModuleManager {
         return null;
     }
 
-    public function AJAX($d) {
-        switch ($d->do) {
+    public function AJAX($d){
+        switch ($d->do){
             case 'preview':
                 return $this->Preview($d->text);
             case 'list':
@@ -97,22 +98,22 @@ class CommentManager extends Ab_ModuleManager {
      * @param Integer $limit
      * @return Integer
      */
-    public function FullList($page, $limit) {
-        if (!$this->IsAdminRole()) {
+    public function FullList($page, $limit){
+        if (!$this->IsAdminRole()){
             return null;
         }
         return CommentQuery::FullList($this->db, $page, $limit);
     }
 
-    public function FullListCount() {
-        if (!$this->IsAdminRole()) {
+    public function FullListCount(){
+        if (!$this->IsAdminRole()){
             return null;
         }
         return CommentQuery::FullListCount($this->db);
     }
 
-    public function ChangeStatus($commentId, $newStatus) {
-        if (!$this->IsAdminRole()) {
+    public function ChangeStatus($commentId, $newStatus){
+        if (!$this->IsAdminRole()){
             return null;
         }
         CommentQuery::SpamSet($this->db, $commentId, $newStatus);
@@ -123,9 +124,9 @@ class CommentManager extends Ab_ModuleManager {
      *
      * @param integer $contentid идентификатор контента
      */
-    private function ContentManager($contentid) {
+    private function ContentManager($contentid){
         $cinfo = Ab_CoreQuery::ContentInfo($this->db, $contentid);
-        if (empty($cinfo)) {
+        if (empty($cinfo)){
             return null;
         }
         $module = Abricos::GetModule($cinfo['modman']);
@@ -139,27 +140,27 @@ class CommentManager extends Ab_ModuleManager {
      * @param integer $contentid идентификатор страницы
      * @param object $d данные комментария
      */
-    public function Append($contentid, $parentCommentId, $text) {
+    public function Append($contentid, $parentCommentId, $text){
 
-        if (empty($text)) {
+        if (empty($text)){
             return null;
         }
-        if (!$this->IsWriteRole()) {
+        if (!$this->IsWriteRole()){
             return null;
         }
 
         $manager = $this->ContentManager($contentid);
-        if (is_null($manager)) {
+        if (is_null($manager)){
             return null;
         }
 
         // разрешает ли управляющий менеджер запись комментария
-        if (method_exists($manager, 'Comment_IsWrite')) {
-            if (!$manager->Comment_IsWrite($contentid)) {
+        if (method_exists($manager, 'Comment_IsWrite')){
+            if (!$manager->Comment_IsWrite($contentid)){
                 return null;
             }
-        } else if (method_exists($manager, 'IsCommentAppend')) { // TODO: метод для поддрежки, подлежит удалению
-            if (!$manager->IsCommentAppend($contentid)) {
+        } else if (method_exists($manager, 'IsCommentAppend')){ // TODO: метод для поддрежки, подлежит удалению
+            if (!$manager->IsCommentAppend($contentid)){
                 return null;
             }
         } else {
@@ -170,7 +171,7 @@ class CommentManager extends Ab_ModuleManager {
         $utmanager = Abricos::TextParser();
 
         $text = $utmanager->Parser($text);
-        if (empty($text)) {
+        if (empty($text)){
             return null;
         }
         $d = new stdClass();
@@ -181,16 +182,16 @@ class CommentManager extends Ab_ModuleManager {
         $d->cid = $contentid;
 
         // управляюищй менеджер отправит уведомление
-        if (method_exists($manager, 'Comment_SendNotify')) {
+        if (method_exists($manager, 'Comment_SendNotify')){
             $manager->Comment_SendNotify($d);
-        } else if (method_exists($manager, 'CommentSendNotify')) { // TODO: метод для поддрежки, подлежит удалению
+        } else if (method_exists($manager, 'CommentSendNotify')){ // TODO: метод для поддрежки, подлежит удалению
             $manager->CommentSendNotify($d);
         }
     }
 
-    public function Preview($text) {
+    public function Preview($text){
         $ret = new stdClass();
-        if (!$this->IsWriteRole()) {
+        if (!$this->IsWriteRole()){
             $ret->text = "Access denied!";
         } else {
             $utmanager = Abricos::TextParser();
@@ -207,23 +208,23 @@ class CommentManager extends Ab_ModuleManager {
      * @param integer $contentId идентификатор контента
      * @param integer $lastid последний передаваемый идентификатор (для подзагрузки новых)
      */
-    public function Comments($contentid, $lastid = 0, $parentCommentId = 0, $newComment = '', $retarray = false) {
-        if (!$this->IsViewRole()) {
+    public function Comments($contentid, $lastid = 0, $parentCommentId = 0, $newComment = '', $retarray = false){
+        if (!$this->IsViewRole()){
             return null;
         }
         $manager = $this->ContentManager($contentid);
 
-        if (is_null($manager)) {
+        if (is_null($manager)){
             return null;
         }
 
         // разрешает ли управляющий менеджер получить список комментариев
-        if (method_exists($manager, 'Comment_IsViewList')) {
-            if (!$manager->Comment_IsViewList($contentid)) {
+        if (method_exists($manager, 'Comment_IsViewList')){
+            if (!$manager->Comment_IsViewList($contentid)){
                 return null;
             }
-        } else if (method_exists($manager, 'IsCommentList')) { // TODO: метод для поддрежки, подлежит удалению
-            if (!$manager->IsCommentList($contentid)) {
+        } else if (method_exists($manager, 'IsCommentList')){ // TODO: метод для поддрежки, подлежит удалению
+            if (!$manager->IsCommentList($contentid)){
                 return null;
             }
         } else {
@@ -231,17 +232,17 @@ class CommentManager extends Ab_ModuleManager {
             return null;
         }
 
-        if (!empty($newComment)) {
+        if (!empty($newComment)){
             $this->Append($contentid, $parentCommentId, $newComment);
         }
 
         $rows = CommentQuery::Comments($this->db, $contentid, $lastid);
-        if (!$retarray) {
+        if (!$retarray){
             return $rows;
         }
         $list = array();
         $max = 0;
-        while (($row = $this->db->fetch_array($rows))) {
+        while (($row = $this->db->fetch_array($rows))){
             $list[$row['id']] = $row;
             $max = max($max, $row['id']);
         }
@@ -249,20 +250,20 @@ class CommentManager extends Ab_ModuleManager {
         return $list;
     }
 
-    public function CommentsWithLastView($contentid, $lastid = 0, $parentCommentId = 0, $newComment = '') {
-        if (!$this->IsViewRole()) {
+    public function CommentsWithLastView($contentid, $lastid = 0, $parentCommentId = 0, $newComment = ''){
+        if (!$this->IsViewRole()){
             return null;
         }
 
         $ret = new stdClass();
         $ret->list = $this->Comments($contentid, $lastid, $parentCommentId, $newComment, true);
         $ret->lastview = -1;
-        if (empty($this->userid) || empty($ret->list)) {
+        if (empty($this->userid) || empty($ret->list)){
             return $ret;
         }
 
         $lv = CommentQuery::LastView($this->db, $this->userid, $contentid);
-        if (empty($lv)) {
+        if (empty($lv)){
             CommentQuery::LastViewAppend($this->db, $this->userid, $contentid, $this->_maxCommentId);
         } else {
             $ret->lastview = $lv['id'];
@@ -290,35 +291,35 @@ class CommentManager extends Ab_ModuleManager {
      * @param integer $userid
      * @param string $eltype
      */
-    public function URating_IsElementVoting(URatingUserReputation $uRep, $act, $elid, $eltype) {
-        if ($eltype != '') {
+    public function URating_IsElementVoting(URatingUserReputation $uRep, $act, $elid, $eltype){
+        if ($eltype != ''){
             return 99;
         }
 
         $info = CommentQuery::CommentInfo($this->db, $elid);
-        if (empty($info)) {
+        if (empty($info)){
             return 99;
         }
 
-        if ($info['uid'] == $this->user->id) {
+        if ($info['uid'] == $this->user->id){
             return 4;
         }
 
         $module = Abricos::GetModule($info['m']);
-        if (empty($module)) {
+        if (empty($module)){
             return 99;
         }
 
         $manager = $module->GetManager();
-        if (empty($manager)) {
+        if (empty($manager)){
             return 99;
         }
 
-        if ($this->IsAdminRole()) { // админу можно голосовать всегда
+        if ($this->IsAdminRole()){ // админу можно голосовать всегда
             return 0;
         }
 
-        if ($uRep->reputation < 1) { // голосовать можно только с положительным рейтингом
+        if ($uRep->reputation < 1){ // голосовать можно только с положительным рейтингом
             return 2;
         }
 
@@ -326,12 +327,12 @@ class CommentManager extends Ab_ModuleManager {
 
         // кол-во голосов за комментарий = кол-ву репутации умноженной на 2
         $voteRepCount = intval($votes['comment']);
-        if ($uRep->reputation * 2 <= $voteRepCount) {
+        if ($uRep->reputation * 2 <= $voteRepCount){
             return 3;
         }
 
         // разрешает ли управляющий менеджер голосовать за комментарий
-        if (!method_exists($manager, 'Comment_IsVoting')) {
+        if (!method_exists($manager, 'Comment_IsVoting')){
             return 99;
         }
 

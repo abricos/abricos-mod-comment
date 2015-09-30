@@ -2,7 +2,8 @@
 /**
  * @package Abricos
  * @subpackage Comment
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @copyright 2008-2015 Alexander Kuzmin
+ * @license http://opensource.org/licenses/mit-license.php MIT License
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
@@ -11,13 +12,13 @@ $v = &$brick->param->var;
 $contentId = Abricos::CleanGPC('g', 'contentid', TYPE_INT);
 $manager = Abricos::GetModule('comment')->GetManager();
 
-if (empty($contentId)) {
+if (empty($contentId)){
     $contentId = Brick::$contentId;
 } else {
     $v['ondom'] = $v['nonondom'];
 }
 
-if ($contentId == 0) {
+if ($contentId == 0){
     $brick->content = "";
     $v = array();
     return;
@@ -29,8 +30,8 @@ $rd = $manager->CommentsWithLastView($contentId);
 $lst = "";
 $t = "";
 $slst = "";
-foreach ($rd->list as $row) {
-    if ($row['st'] == 1) {
+foreach ($rd->list as $row){
+    if ($row['st'] == 1){
         $row['bd'] = '';
     }
 
@@ -47,7 +48,7 @@ $v['lst'] = $lst;
 $v['slst'] = $slst;
 $v['lid'] = $rd->lastview;
 
-if (!empty($brick->param->param['voting'])) {
+if (!empty($brick->param->param['voting'])){
     $v['voting'] = 'true';
 }
 

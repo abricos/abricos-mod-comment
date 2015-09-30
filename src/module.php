@@ -1,10 +1,9 @@
 <?php
 /**
- * Модуль "Комментарии"
- *
  * @package Abricos
  * @subpackage Comment
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @copyright 2008-2015 Alexander Kuzmin
+ * @license http://opensource.org/licenses/mit-license.php MIT License
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
@@ -18,7 +17,7 @@ class CommentModule extends Ab_Module {
 
     private $_manager = null;
 
-    function __construct() {
+    function __construct(){
         $this->version = "0.4.2";
         $this->name = "comment";
 
@@ -30,8 +29,8 @@ class CommentModule extends Ab_Module {
      *
      * @return CommentManager
      */
-    public function GetManager() {
-        if (is_null($this->_manager)) {
+    public function GetManager(){
+        if (is_null($this->_manager)){
             require_once 'includes/manager.php';
             $this->_manager = new CommentManager($this);
         }
@@ -47,7 +46,7 @@ class CommentAction {
 
 class CommentPermission extends Ab_UserPermission {
 
-    public function CommentPermission(CommentModule $module) {
+    public function CommentPermission(CommentModule $module){
 
         $defRoles = array(
             new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::GUEST),
@@ -63,7 +62,7 @@ class CommentPermission extends Ab_UserPermission {
         parent::__construct($module, $defRoles);
     }
 
-    public function GetRoles() {
+    public function GetRoles(){
         return array(
             CommentAction::VIEW => $this->CheckAction(CommentAction::VIEW),
             CommentAction::WRITE => $this->CheckAction(CommentAction::WRITE),
