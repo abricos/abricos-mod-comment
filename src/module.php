@@ -18,7 +18,7 @@ class CommentModule extends Ab_Module {
     private $_manager = null;
 
     function __construct(){
-        $this->version = "0.4.2";
+        $this->version = "0.4.3";
         $this->name = "comment";
 
         $this->permission = new CommentPermission($this);
