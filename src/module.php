@@ -39,33 +39,19 @@ class CommentModule extends Ab_Module {
 }
 
 class CommentAction {
-    const VIEW = 10;
-    const WRITE = 20;
     const ADMIN = 50;
 }
 
 class CommentPermission extends Ab_UserPermission {
 
-    public function CommentPermission(CommentModule $module){
-
-        $defRoles = array(
-            new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::GUEST),
-            new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::REGISTERED),
-            new Ab_UserRole(CommentAction::VIEW, Ab_UserGroup::ADMIN),
-
-            new Ab_UserRole(CommentAction::WRITE, Ab_UserGroup::REGISTERED),
-            new Ab_UserRole(CommentAction::WRITE, Ab_UserGroup::ADMIN),
-
+    public function __construct(CommentModule $module){
+        parent::__construct($module, array(
             new Ab_UserRole(CommentAction::ADMIN, Ab_UserGroup::ADMIN),
-        );
-
-        parent::__construct($module, $defRoles);
+        ));
     }
 
     public function GetRoles(){
         return array(
-            CommentAction::VIEW => $this->CheckAction(CommentAction::VIEW),
-            CommentAction::WRITE => $this->CheckAction(CommentAction::WRITE),
             CommentAction::ADMIN => $this->CheckAction(CommentAction::ADMIN)
         );
     }

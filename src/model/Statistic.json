@@ -1,0 +1,26 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "count": {
+      "type": "int",
+      "json": "ccnt",
+      "dbField": "commentCount"
+    },
+    "lastid": {
+      "type": "int",
+      "json": "lcid"
+    },
+    "lastUserid": {
+      "type": "int",
+      "json": "lcuid"
+    },
+    "lastDate": {
+      "type": "date",
+      "json": "lcdl"
+    }
+  }
+}

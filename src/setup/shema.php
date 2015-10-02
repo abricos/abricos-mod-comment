@@ -51,6 +51,7 @@ if ($updateManager->isUpdate('0.4.3')){
         )".$charset
     );
 
+    // Owner Statistic
     $db->query_write("
         CREATE TABLE IF NOT EXISTS ".$pfx."comment_ownerstat (
             ownerModule VARCHAR(50) NOT NULL COMMENT 'Owner Module Name',
@@ -58,14 +59,13 @@ if ($updateManager->isUpdate('0.4.3')){
             ownerid int(10) UNSIGNED NOT NULL COMMENT 'Owner ID',
 
             commentCount int(5) UNSIGNED NOT NULL COMMENT '',
-            commentid int(10) UNSIGNED NOT NULL COMMENT 'Last Comment ID',
-            userid int(10) UNSIGNED NOT NULL COMMENT 'User ID in Last Comment',
 
-            dateline int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Create Date',
-			upddate int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Update Date',
+            lastCommentid int(10) UNSIGNED NOT NULL COMMENT 'Last Comment ID',
+            lastUserid int(10) UNSIGNED NOT NULL COMMENT 'User ID in Last Comment',
+			lastCommentDate int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Date in Last Comment',
 
             UNIQUE KEY ownerstat (ownerModule, ownerType, ownerid),
-            KEY upddate (upddate)
+            KEY lastCommentDate (lastCommentDate)
         )".$charset
     );
 
@@ -147,8 +147,11 @@ if ($updateManager->isUpdate('0.4.3') && !$updateManager->isInstall()){
     ");
 
     $db->query_write("
-        INSERT INTO ".$pfx."comment_ownerstat
-        (ownerModule, ownerType, ownerid, commentCount, commentid, userid, dateline, upddate)
+        INSERT INTO ".$pfx."comment_ownerstat (
+            ownerModule, ownerType, ownerid,
+            commentCount,
+            lastCommentid, lastUserid, lastCommentDate
+        )
         SELECT
             o.ownerModule,
             o.ownerType,
@@ -156,11 +159,10 @@ if ($updateManager->isUpdate('0.4.3') && !$updateManager->isInstall()){
             count(o.commentid),
             o.commentid,
             o.userid,
-            o.dateline,
             o.dateline
         FROM ".$pfx."comment_owner o
         GROUP BY ownerModule, ownerType, ownerid
-        ORDER BY dateline DESC
+        ORDER BY o.dateline DESC
     ");
 
     $db->query_write("DROP TABLE IF EXISTS ".$pfx."cmt_comment");

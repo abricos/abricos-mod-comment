@@ -55,6 +55,26 @@ class CommentManager extends Ab_ModuleManager {
         return $this->IsRoleEnable(CommentAction::VIEW);
     }
 
+    private $_app = null;
+
+    /**
+     * @return CommentApp
+     */
+    public function GetApp(){
+        if (!is_null($this->_app)){
+            return $this->_app;
+        }
+        require_once 'dbquery.php';
+        require_once 'classes/app.php';
+        return $this->_app = new CommentApp($this);
+    }
+
+    public function AJAX($d){
+        return $this->GetApp()->AJAX($d);
+    }
+
+
+    /*
     public function DSProcess($name, $rows){
         $p = $rows->p;
         switch ($name){
@@ -91,13 +111,7 @@ class CommentManager extends Ab_ModuleManager {
         return null;
     }
 
-    /**
-     * Вернуть указатель на полный список комментариев.
-     *
-     * @param Integer $page
-     * @param Integer $limit
-     * @return Integer
-     */
+
     public function FullList($page, $limit){
         if (!$this->IsAdminRole()){
             return null;
@@ -119,11 +133,7 @@ class CommentManager extends Ab_ModuleManager {
         CommentQuery::SpamSet($this->db, $commentId, $newStatus);
     }
 
-    /**
-     * Получить менеджер, управляющий списком комментариев по идентификатору контента
-     *
-     * @param integer $contentid идентификатор контента
-     */
+
     private function ContentManager($contentid){
         $cinfo = Ab_CoreQuery::ContentInfo($this->db, $contentid);
         if (empty($cinfo)){
@@ -134,12 +144,7 @@ class CommentManager extends Ab_ModuleManager {
         return $manager;
     }
 
-    /**
-     * Добавить комментарий
-     *
-     * @param integer $contentid идентификатор страницы
-     * @param object $d данные комментария
-     */
+
     public function Append($contentid, $parentCommentId, $text){
 
         if (empty($text)){
@@ -202,12 +207,7 @@ class CommentManager extends Ab_ModuleManager {
 
     private $_maxCommentId = 0;
 
-    /**
-     * Получить список комментариев
-     *
-     * @param integer $contentId идентификатор контента
-     * @param integer $lastid последний передаваемый идентификатор (для подзагрузки новых)
-     */
+
     public function Comments($contentid, $lastid = 0, $parentCommentId = 0, $newComment = '', $retarray = false){
         if (!$this->IsViewRole()){
             return null;
@@ -272,7 +272,7 @@ class CommentManager extends Ab_ModuleManager {
 
         return $ret;
     }
-
+    /**/
 
     /**
      * Можно ли проголосовать текущему пользователю за комментарий
