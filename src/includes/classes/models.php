@@ -25,4 +25,20 @@ class CommentStatistic extends AbricosModel {
 class CommentStatisticList extends AbricosModelList {
 }
 
+/**
+ * Class Comment
+ */
+class Comment extends AbricosModel {
+    protected $_structModule = 'comment';
+    protected $_structName = 'Comment';
+}
+
+/**
+ * Class CommentList
+ * @method Comment Get($commentid)
+ * @method Comment GetByIndex($index)
+ */
+class CommentList extends AbricosModelList {
+}
+
 ?>

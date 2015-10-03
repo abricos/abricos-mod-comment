@@ -24,7 +24,22 @@ Component.entryPoint = function(NS){
             }, this);
         }
     }, [], {
+        APPS: {
+            uprofile: {}
+        },
+        REQS: {
+            commentList: {
+                args: ['module', 'type', 'ownerid'],
+                attribute: false,
+                type: 'modelList:CommentList',
+                onResponse: function(commentList){
+                    console.log(arguments);
+                }
+            }
+        },
         ATTRS: {
+            Comment: {value: NS.Comment},
+            CommentList: {value: NS.CommentList}
         }
     });
 

@@ -1,0 +1,21 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "userid": {
+      "type": "int",
+      "json": "uid"
+    },
+    "body": {
+      "type": "string",
+      "json": "bd"
+    },
+    "dateline": {
+      "type": "int",
+      "json": "dl"
+    }
+  }
+}

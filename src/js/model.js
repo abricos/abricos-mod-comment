@@ -10,9 +10,25 @@ Component.entryPoint = function(NS){
 
     NS.Statistic = Y.Base.create('statistic', SYS.AppModel, [], {
         structureName: 'Statistic'
+    }, {
+        ATTRS: {
+            lastUser: {}
+        }
     });
 
     NS.StatisticList = Y.Base.create('statisticList', SYS.AppModelList, [], {
         appItem: NS.Statistic
+    });
+
+    NS.Comment = Y.Base.create('statistic', SYS.AppModel, [], {
+        structureName: 'Comment'
+    }, {
+        ATTRS: {
+            user: {}
+        }
+    });
+
+    NS.CommentList = Y.Base.create('statisticList', SYS.AppModelList, [], {
+        appItem: NS.Comment
     });
 };

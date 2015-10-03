@@ -12,6 +12,19 @@
  */
 class CommentQuery {
 
+    public static function CommentList(Ab_Database $db, $module, $type, $ownerid){
+        $sql = "
+            SELECT
+                c.*
+            FROM ".$db->prefix."comment_owner o
+            INNER JOIN ".$db->prefix."comment c ON c.commentid=o.commentid
+            WHERE o.ownerModule='".bkstr($module)."'
+                AND o.ownerType='".bkstr($type)."'
+                AND o.ownerid=".intval($ownerid)."
+        ";
+        return $db->query_read($sql);
+    }
+
     public static function StatisticList(Ab_Database $db, $module, $type, $ownerids){
         $aw = array();
         $count = count($ownerids);
@@ -35,7 +48,6 @@ class CommentQuery {
 			    AND ownerType='".bkstr($type)."'
 			    AND (".implode(" OR ", $aw).")
 		";
-        return $db->query_read($sql);
     }
 }
 
