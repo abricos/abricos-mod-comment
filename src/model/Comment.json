@@ -3,7 +3,12 @@
   "type": "model",
   "fields": {
     "id": {
-      "type": "int"
+      "type": "int",
+      "dbField": "commentid"
+    },
+    "parentid": {
+      "type": "int",
+      "json": "pid"
     },
     "userid": {
       "type": "int",
@@ -14,7 +19,7 @@
       "json": "bd"
     },
     "dateline": {
-      "type": "int",
+      "type": "date",
       "json": "dl"
     }
   }

@@ -33,7 +33,21 @@ Component.entryPoint = function(NS){
                 attribute: false,
                 type: 'modelList:CommentList',
                 onResponse: function(commentList){
-                    console.log(arguments);
+                    var userIds = commentList.toArray('userid', {distinct: true});
+                    if (userIds.length === 0){
+                        return;
+                    }
+                    return function(callback, context){
+                        this.getApp('uprofile').userListByIds(userIds, function(err, result){
+                            var userList = result.userListByIds;
+                            commentList.each(function(comment){
+                                var user = userList.getById(comment.get('userid'));
+                                comment.set('user', user);
+                            }, this);
+                            callback.call(context || null);
+                        }, context);
+                    };
+
                 }
             }
         },

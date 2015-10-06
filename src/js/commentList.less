@@ -1,0 +1,64 @@
+.aw-comment.commentList {
+
+  .comment {
+    margin-top: 20px;
+  }
+
+  .info {
+    font-size: 11px;
+
+    .avatar,
+    .viewName,
+    .date {
+      margin-right: 10px;
+    }
+    .avatar {
+      img {
+        width: 45px;
+        height: 45px;
+      }
+    }
+    a.viewName {
+      color: #666666;
+      font-weight: bolder;
+    }
+    .date {
+      color: #999999;
+    }
+  }
+
+  .commentBody {
+    padding: 15px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: none repeat scroll 0 0 #F7F7F7;
+    position: relative;
+
+    .text {
+      overflow: hidden;
+    }
+    &:before,
+    &:after {
+      display: block;
+      content: "";
+      position: absolute;
+      top: -16px;
+      left: 10px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+    &:before {
+      border-width: 8px;
+      border-color: transparent transparent #ddd;
+    }
+    &:after {
+      top: -12px;
+      left: 12px;
+      border-width: 6px;
+      border-color: transparent transparent #F7F7F7;
+    }
+  }
+
+}

@@ -48,6 +48,7 @@ class CommentQuery {
 			    AND ownerType='".bkstr($type)."'
 			    AND (".implode(" OR ", $aw).")
 		";
+        return $db->query_read($sql);
     }
 }
 
