@@ -7,6 +7,7 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
+require_once 'dbquery.php';
 require_once 'models.php';
 
 /**
@@ -35,6 +36,11 @@ class CommentApp extends AbricosApplication {
                 return $this->CommentListToJSON($d->module, $d->type, $d->ownerid);
         }
         return null;
+    }
+
+    public function IsRaiting(){
+        $modURating = Abricos::GetModule("urating");
+        return !empty($modURating);
     }
 
     private $_cache = array();

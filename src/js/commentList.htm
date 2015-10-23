@@ -5,6 +5,8 @@
 
     <div id="{i#list}"></div>
 
+    <div id="{i#replyPanel}"></div>
+    <a id="{i#replyButton}" data-click="replyShow" href="#" class="hide">Написать комментарий</a>
 </div>
 
 
@@ -26,5 +28,26 @@
         <div class="text" id="{i#body}"></div>
     </div>
 
+    <div id="{i#replyPanel}"></div>
+    <a id="{i#replyButton}" data-click="replyShow" href="#" class="hide">Ответить</a>
+
     <div id="{i#list}"></div>
+</div>
+
+<!--{reply}-->
+<div class="reply">
+    <div class="commentEditor">
+        <div id="{i#editor}" data-rows="7"></div>
+    </div>
+    <div class="buttons">
+        <button data-click="commentSend" type="button" class="btn btn-default">
+            Просмотр
+        </button>
+        <button data-click="commentSend" type="button" class="btn btn-default">
+            Отправить комментарий
+        </button>
+        <button data-click="commentClose" type="button" class="btn btn-default">
+            Отмена
+        </button>
+    </div>
 </div>

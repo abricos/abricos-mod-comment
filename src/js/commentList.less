@@ -2,6 +2,10 @@
 
   .comment {
     margin-top: 20px;
+
+    .comment {
+      margin-left: 20px;
+    }
   }
 
   .info {
@@ -38,6 +42,7 @@
     .text {
       overflow: hidden;
     }
+
     &:before,
     &:after {
       display: block;
@@ -58,6 +63,15 @@
       left: 12px;
       border-width: 6px;
       border-color: transparent transparent #F7F7F7;
+    }
+  }
+
+  .reply {
+    .commentEditor {
+      margin-bottom: 10px;
+    }
+    button {
+      margin-right: 5px;
     }
   }
 
