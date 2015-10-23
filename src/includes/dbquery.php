@@ -12,6 +12,21 @@
  */
 class CommentQuery {
 
+    public static function Comment(Ab_Database $db, $module, $type, $ownerid, $commentid){
+        $sql = "
+            SELECT
+                c.*
+            FROM ".$db->prefix."comment_owner o
+            INNER JOIN ".$db->prefix."comment c ON c.commentid=o.commentid
+            WHERE o.ownerModule='".bkstr($module)."'
+                AND o.ownerType='".bkstr($type)."'
+                AND o.ownerid=".intval($ownerid)."
+                AND o.commentid=".intval($commentid)."
+            LIMIT 1
+        ";
+        return $db->query_first($sql);
+    }
+
     public static function CommentList(Ab_Database $db, $module, $type, $ownerid){
         $sql = "
             SELECT

@@ -27,6 +27,11 @@ class CommentStatisticList extends AbricosModelList {
 
 /**
  * Class Comment
+ *
+ * @property int $parentid
+ * @property int $userid
+ * @property string $body
+ * @property int $dateline
  */
 class Comment extends AbricosModel {
     protected $_structModule = 'comment';

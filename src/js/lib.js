@@ -49,6 +49,10 @@ Component.entryPoint = function(NS){
                     };
 
                 }
+            },
+            replyPreview: {
+                args: ['module', 'type', 'ownerid', 'reply'],
+                type: 'model:Comment'
             }
         },
         ATTRS: {

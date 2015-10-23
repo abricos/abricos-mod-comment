@@ -41,56 +41,6 @@ class CommentManager extends Ab_ModuleManager {
         return $this->IsRoleEnable(CommentAction::VIEW);
     }
 
-    private $_app = null;
-
-    /**
-     * @return CommentApp
-     */
-    public function GetApp(){
-        if (!is_null($this->_app)){
-            return $this->_app;
-        }
-        require_once 'dbquery.php';
-        require_once 'classes/app.php';
-        return $this->_app = new CommentApp($this);
-    }
-
-    public function DSProcess($name, $rows){
-        $p = $rows->p;
-        switch ($name){
-            case 'fulllist':
-                foreach ($rows->r as $r){
-                    if ($r->f == 'u'){
-                        if ($r->d->act == 'status'){
-                            $this->ChangeStatus($r->d->id, $r->d->st);
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
-    public function DSGetData($name, $rows){
-        $p = $rows->p;
-        switch ($name){
-            case 'fulllist':
-                return $this->FullList($p->page, $p->limit);
-            case 'fulllistcount':
-                return $this->FullListCount();
-        }
-        return null;
-    }
-
-    public function AJAX($d){
-        switch ($d->do){
-            case 'preview':
-                return $this->Preview($d->text);
-            case 'list':
-                return $this->CommentsWithLastView($d->cid, $d->lid, $d->pid, $d->text);
-        }
-        return null;
-    }
-
 
     public function FullList($page, $limit){
         if (!$this->IsAdminRole()){

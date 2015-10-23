@@ -95,7 +95,7 @@ Component.entryPoint = function(NS){
                 w.replyClose();
             }, this);
 
-            if (!this._commentEditor){
+            if (!this._replyEditor){
                 return;
             }
             var tp = this.template;
@@ -103,8 +103,8 @@ Component.entryPoint = function(NS){
             tp.setHTML('replyPanel', '');
             tp.toggleView(false, 'replyPanel', 'replyButton');
 
-            this._commentEditor.destroy();
-            delete this._commentEditor;
+            this._replyEditor.destroy();
+            delete this._replyEditor;
         },
         replyShow: function(){
             this.get('rootWidget').replyClose();
@@ -114,17 +114,52 @@ Component.entryPoint = function(NS){
             tp.setHTML('replyPanel', tp.replace('reply'));
             tp.toggleView(true, 'replyPanel', 'replyButton');
 
-            this._commentEditor = new SYS.Editor({
+            this._replyEditor = new SYS.Editor({
                 appInstance: this.get('appInstance'),
                 srcNode: tp.gel('reply.editor'),
                 content: '',
                 toolbar: SYS.Editor.TOOLBAR_MINIMAL
             });
         },
+        replyToJSON: function(){
+            if (!this._replyEditor){
+                return null;
+            }
+            return {
+                parentid: this.get('commentid'),
+                body: this._replyEditor.get('content')
+            };
+        },
+        replySend: function(){},
+        replyPreview: function(){
+            var ownerModule = this.get('ownerModule'),
+                ownerType = this.get('ownerType'),
+                ownerid = this.get('ownerid'),
+                reply = this.replyToJSON();
+
+            this.set('waiting', true);
+            this.get('appInstance').replyPreview(ownerModule, ownerType, ownerid, reply, function(err, result){
+                this.set('waiting', false);
+                if (!err){
+                    this.setPreview(result.replyPreview);
+                }
+            }, this);
+        },
+        setPreview: function(comment){
+            var tp = this.template;
+            tp.show('reply.preview');
+            tp.setHTML('reply.preview', comment.get('body'));
+        },
         onClick: function(e){
             switch (e.dataClick) {
                 case 'replyShow':
                     this.replyShow();
+                    return true;
+                case 'replyClose':
+                    this.replyClose();
+                    return true;
+                case 'replyPreview':
+                    this.replyPreview();
                     return true;
 
             }
@@ -165,7 +200,11 @@ Component.entryPoint = function(NS){
         onInitAppWidget: function(err, appInstance){
             this.set('waiting', true);
 
-            this.get('appInstance').commentList(this.get('ownerModule'), this.get('ownerType'), this.get('ownerid'), function(err, result){
+            var ownerModule = this.get('ownerModule'),
+                ownerType = this.get('ownerType'),
+                ownerid = this.get('ownerid')
+
+            this.get('appInstance').commentList(ownerModule, ownerType, ownerid, function(err, result){
                 this.set('waiting', false);
                 if (!err){
                     this.set('commentList', result.commentList);
