@@ -57,6 +57,10 @@ Component.entryPoint = function(NS){
             }
         },
         _renderCommentList: function(commentList){
+            var isNewCommentList = false;
+            if (commentList){
+                isNewCommentList = true;
+            }
             commentList = commentList || this.get('commentList');
 
             var tp = this.template,
@@ -82,6 +86,12 @@ Component.entryPoint = function(NS){
                 });
                 ws[ws.length] = w;
             }, this);
+
+            if (isNewCommentList){
+                this.each(function(w){
+                    w._renderCommentList(commentList);
+                }, this);
+            }
 
             tp.toggleView(!readOnly, 'replyButton');
         },
@@ -141,7 +151,7 @@ Component.entryPoint = function(NS){
             this.get('appInstance').reply(ownerModule, ownerType, ownerid, reply, function(err, result){
                 this.set('waiting', false);
                 if (!err){
-                    this.get('rootWidget')._renderCommentList(result.commentList);
+                    this.replyClose();
                 }
             }, this);
         },
@@ -191,8 +201,6 @@ Component.entryPoint = function(NS){
                 comment = this.get('comment'),
                 user = comment.get('user');
 
-            console.log(comment.toJSON());
-
             tp.setHTML({
                 aViewName: user.get('viewName'),
                 date: Brick.dateExt.convert(comment.get('dateline')),
@@ -220,24 +228,46 @@ Component.entryPoint = function(NS){
                 ownerType = this.get('ownerType'),
                 ownerid = this.get('ownerid')
 
-            this.get('appInstance').commentList(ownerModule, ownerType, ownerid, function(err, result){
+            appInstance.commentList(ownerModule, ownerType, ownerid, function(err, result){
                 this.set('waiting', false);
                 if (!err){
                     this.set('commentList', result.commentList);
                 }
                 this.renderCommentList();
+
+                appInstance.on('appResponses', this._onAppResponses, this);
             }, this);
         },
-        renderCommentList: function(){
+        destructor: function(){
+            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
+        },
+        _onAppResponses: function(e){
+            if (e.err || !e.result.commentList){
+                return;
+            }
+            var commentList = e.result.commentList;
+            if (commentList.get('ownerModule') !== this.get('ownerModule')
+                || commentList.get('ownerType') !== this.get('ownerType')
+                || commentList.get('ownerid') !== this.get('ownerid')){
+                return;
+            }
+            this.renderCommentList(commentList);
+        },
+        renderCommentList: function(newCommentList){
             var tp = this.template,
                 commentList = this.get('commentList'),
-                readOnly = this.get('readOnly');
+                readOnly = this.get('readOnly'),
+                count = commentList.size();
+
+            if (newCommentList){
+                count += newCommentList.size();
+            }
 
             tp.setHTML({
-                count: commentList.size()
+                count: count
             });
 
-            this._renderCommentList();
+            this._renderCommentList(newCommentList);
         }
     }, {
         ATTRS: {

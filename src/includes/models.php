@@ -47,13 +47,21 @@ class CommentList extends AbricosModelList {
 
     /**
      * Last viewed by the current user comment
+     *
      * @var int
      */
     public $userview = 0;
 
+    public $ownerModule = '';
+    public $ownerType = '';
+    public $ownerid = 0;
+
     public function ToJSON(){
         $ret = parent::ToJSON();
         $ret->userview = $this->userview;
+        $ret->ownerModule = $this->ownerModule;
+        $ret->ownerType = $this->ownerType;
+        $ret->ownerid = $this->ownerid;
         return $ret;
     }
 }

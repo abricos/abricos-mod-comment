@@ -131,6 +131,8 @@ class CommentApp extends AbricosApplication {
             return null;
         }
         $comment->body = $body;
+        $comment->userid = Abricos::$user->id;
+        $comment->dateline = TIMENOW;
 
         return $comment;
     }
@@ -200,6 +202,9 @@ class CommentApp extends AbricosApplication {
 
         /** @var CommentList $list */
         $list = $this->InstanceClass('CommentList');
+        $list->ownerModule = $module;
+        $list->ownerType = $type;
+        $list->ownerid = $ownerid;
 
         $rows = CommentQuery::CommentList($this, $module, $type, $ownerid, $fromCommentId);
         $maxCommentId = 0;

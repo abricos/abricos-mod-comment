@@ -20,7 +20,7 @@ Component.entryPoint = function(NS){
         appItem: NS.Statistic
     });
 
-    NS.Comment = Y.Base.create('statistic', SYS.AppModel, [], {
+    NS.Comment = Y.Base.create('comment', SYS.AppModel, [], {
         structureName: 'Comment'
     }, {
         ATTRS: {
@@ -28,7 +28,13 @@ Component.entryPoint = function(NS){
         }
     });
 
-    NS.CommentList = Y.Base.create('statisticList', SYS.AppModelList, [], {
+    NS.CommentList = Y.Base.create('commentList', SYS.AppModelList, [], {
         appItem: NS.Comment
+    }, {
+        ATTRS: {
+            ownerModule: {},
+            ownerType: {},
+            ownerid: {}
+        }
     });
 };

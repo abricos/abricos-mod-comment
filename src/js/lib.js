@@ -32,7 +32,10 @@ Component.entryPoint = function(NS){
                 args: ['module', 'type', 'ownerid'],
                 attribute: false,
                 type: 'modelList:CommentList',
-                onResponse: function(commentList){
+                onResponse: function(commentList, srcData){
+                    commentList.set('ownerModule', srcData.ownerModule);
+                    commentList.set('ownerType', srcData.ownerType);
+                    commentList.set('ownerid', srcData.ownerid);
                     var userIds = commentList.toArray('userid', {distinct: true});
                     if (userIds.length === 0){
                         return;
