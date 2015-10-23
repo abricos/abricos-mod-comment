@@ -173,40 +173,7 @@ class old_CommentQuery {
         return $db->query_first($sql);
     }
 
-    public static function LastView(Ab_Database $db, $userid, $contentid) {
-        $sql = "
-			SELECT 
-				commentid as id,
-				dateline as dl
-			FROM ".$db->prefix."cmt_lastview
-			WHERE userid=".bkint($userid)." AND contentid=".bkint($contentid)."
-			LIMIT 1
-		";
-        return $db->query_first($sql);
-    }
 
-    public static function LastViewAppend(Ab_Database $db, $userid, $contentid, $commentid) {
-        $sql = "
-			INSERT INTO ".$db->prefix."cmt_lastview (contentid, userid, commentid, dateline) VALUES (
-				".bkint($contentid).",
-				".bkint($userid).",
-				".bkint($commentid).",
-				".TIMENOW."
-			)
-		";
-        $db->query_write($sql);
-        return $db->insert_id();
-    }
-
-    public static function LastViewUpdate(Ab_Database $db, $userid, $contentid, $commentid) {
-        $sql = "
-			UPDATE ".$db->prefix."cmt_lastview
-			SET commentid=".bkint($commentid)."
-			WHERE userid=".bkint($userid)." AND contentid=".bkint($contentid)."
-			LIMIT 1
-		";
-        $db->query_write($sql);
-    }
 }
 
 ?>

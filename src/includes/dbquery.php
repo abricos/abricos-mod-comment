@@ -12,10 +12,10 @@
  */
 class CommentQuery {
 
-    public static function Comment(Ab_Database $db, $module, $type, $ownerid, $commentid){
+    public static function Comment(CommentApp $app, $module, $type, $ownerid, $commentid){
+        $db = $app->db;
         $sql = "
-            SELECT
-                c.*
+            SELECT c.*
             FROM ".$db->prefix."comment_owner o
             INNER JOIN ".$db->prefix."comment c ON c.commentid=o.commentid
             WHERE o.ownerModule='".bkstr($module)."'
@@ -27,20 +27,52 @@ class CommentQuery {
         return $db->query_first($sql);
     }
 
-    public static function CommentList(Ab_Database $db, $module, $type, $ownerid){
+    public static function CommentAppend(CommentApp $app, $module, $type, $ownerid, Comment $comment){
+        $db = $app->db;
         $sql = "
-            SELECT
-                c.*
+            INSERT INTO ".$db->prefix."comment
+            (parentid, userid, body, dateline) VALUES (
+                ".intval($comment->parentid).",
+                ".intval(Abricos::$user->id).",
+                '".bkstr($comment->body)."',
+                ".TIMENOW."
+            )
+        ";
+        $db->query_write($sql);
+        $commentid = $db->insert_id();
+
+        $sql = "
+            INSERT INTO ".$db->prefix."comment_owner
+            (ownerModule, ownerType, ownerid, commentid, userid, dateline) VALUES (
+                '".bkstr($module)."',
+                '".bkstr($type)."',
+                ".intval($ownerid).",
+                ".intval($commentid).",
+                ".intval(Abricos::$user->id).",
+                ".TIMENOW."
+            )
+        ";
+        $db->query_write($sql);
+
+        return $commentid;
+    }
+
+    public static function CommentList(CommentApp $app, $module, $type, $ownerid, $fromCommentId = 0){
+        $db = $app->db;
+        $sql = "
+            SELECT c.*
             FROM ".$db->prefix."comment_owner o
             INNER JOIN ".$db->prefix."comment c ON c.commentid=o.commentid
             WHERE o.ownerModule='".bkstr($module)."'
                 AND o.ownerType='".bkstr($type)."'
                 AND o.ownerid=".intval($ownerid)."
+                AND c.commentid>".bkint($fromCommentId)."
         ";
         return $db->query_read($sql);
     }
 
-    public static function StatisticList(Ab_Database $db, $module, $type, $ownerids){
+    public static function StatisticList(CommentApp $app, $module, $type, $ownerids){
+        $db = $app->db;
         $aw = array();
         $count = count($ownerids);
         if ($count === 0){
@@ -64,6 +96,39 @@ class CommentQuery {
 			    AND (".implode(" OR ", $aw).")
 		";
         return $db->query_read($sql);
+    }
+
+    public static function UserView(CommentApp $app, $module, $type, $ownerid) {
+        $db = $app->db;
+        $sql = "
+			SELECT *
+			FROM ".$db->prefix."comment_userview
+			WHERE userid=".bkint(Abricos::$user->id)."
+			    AND ownerModule='".bkstr($module)."'
+			    AND ownerType='".bkstr($type)."'
+			    AND ownerid=".intval($ownerid)."
+			LIMIT 1
+		";
+        return $db->query_first($sql);
+    }
+
+    public static function UserViewSave(CommentApp $app, $module, $type, $ownerid, $commentid){
+        $db = $app->db;
+        $sql = "
+			INSERT INTO ".$db->prefix."comment_userview
+			(ownerModule, ownerType, ownerid, userid, commentid, dateline) VALUES (
+			    '".bkstr($module)."',
+			    '".bkstr($type)."',
+				".bkint($ownerid).",
+				".bkint(Abricos::$user->id).",
+				".bkint($commentid).",
+				".TIMENOW."
+			)
+			ON DUPLICATE KEY UPDATE
+				commentid=".bkint($commentid).",
+				dateline=".TIMENOW."
+		";
+        $db->query_write($sql);
     }
 }
 

@@ -56,11 +56,12 @@ Component.entryPoint = function(NS){
                 ws[i].destroy();
             }
         },
-        _renderCommentList: function(){
+        _renderCommentList: function(commentList){
+            commentList = commentList || this.get('commentList');
+
             var tp = this.template,
                 ws = this._widgets,
                 readOnly = this.get('readOnly'),
-                commentList = this.get('commentList'),
                 commentid = this.get('commentid'),
                 parentWidget = this;
 
@@ -70,7 +71,7 @@ Component.entryPoint = function(NS){
                 }
 
                 var w = new NS.CommentItemWidget({
-                    srcNode: tp.append('list', '<div></div>'),
+                    boundingBox: tp.append('list', '<div></div>'),
                     ownerModule: this.get('ownerModule'),
                     ownerType: this.get('ownerType'),
                     ownerid: this.get('ownerid'),
@@ -130,7 +131,20 @@ Component.entryPoint = function(NS){
                 body: this._replyEditor.get('content')
             };
         },
-        replySend: function(){},
+        replySend: function(){
+            var ownerModule = this.get('ownerModule'),
+                ownerType = this.get('ownerType'),
+                ownerid = this.get('ownerid'),
+                reply = this.replyToJSON();
+
+            this.set('waiting', true);
+            this.get('appInstance').reply(ownerModule, ownerType, ownerid, reply, function(err, result){
+                this.set('waiting', false);
+                if (!err){
+                    this.get('rootWidget')._renderCommentList(result.commentList);
+                }
+            }, this);
+        },
         replyPreview: function(){
             var ownerModule = this.get('ownerModule'),
                 ownerType = this.get('ownerType'),
@@ -161,7 +175,9 @@ Component.entryPoint = function(NS){
                 case 'replyPreview':
                     this.replyPreview();
                     return true;
-
+                case 'replySend':
+                    this.replySend();
+                    return true;
             }
         }
     };

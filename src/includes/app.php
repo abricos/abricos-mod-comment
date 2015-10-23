@@ -32,6 +32,8 @@ class CommentApp extends AbricosApplication {
 
     public function ResponseToJSON($d){
         switch ($d->do){
+            case 'reply':
+                return $this->ReplyToJSON($d->module, $d->type, $d->ownerid, $d->reply);
             case 'replyPreview':
                 return $this->ReplyPreviewToJSON($d->module, $d->type, $d->ownerid, $d->reply);
             case 'commentList':
@@ -133,6 +135,35 @@ class CommentApp extends AbricosApplication {
         return $comment;
     }
 
+    public function ReplyToJSON($module, $type, $ownerid, $d){
+        $comment = $this->Reply($module, $type, $ownerid, $d);
+        $ret = $this->ResultToJSON('reply', $comment);
+
+        if (!is_integer($comment)){
+            $ret = $this->ImplodeJSON(
+                $this->CommentListToJSON($module, $type, $ownerid, $comment->id - 1),
+                $ret
+            );
+        }
+        return $ret;
+    }
+
+    public function Reply($module, $type, $ownerid, $d){
+        if (($err = $this->IsCommentWrite($module, $type, $ownerid)) > 0){
+            return $err;
+        }
+
+        $comment = $this->ReplyParser($module, $type, $ownerid, $d);
+        if (empty($comment)){
+            return 400;
+        }
+
+        $commentid = CommentQuery::CommentAppend($this, $module, $type, $ownerid, $comment);
+        $comment->id = $commentid;
+
+        return $comment;
+    }
+
     public function ReplyPreviewToJSON($module, $type, $ownerid, $d){
         $ret = $this->ReplyPreview($module, $type, $ownerid, $d);
         return $this->ResultToJSON('replyPreview', $ret);
@@ -151,8 +182,8 @@ class CommentApp extends AbricosApplication {
         return $comment;
     }
 
-    public function CommentListToJSON($module, $type, $ownerid){
-        $ret = $this->CommentList($module, $type, $ownerid);
+    public function CommentListToJSON($module, $type, $ownerid, $fromCommentId = 0){
+        $ret = $this->CommentList($module, $type, $ownerid, $fromCommentId);
         return $this->ResultToJSON('commentList', $ret);
     }
 
@@ -162,7 +193,7 @@ class CommentApp extends AbricosApplication {
      * @param $ownerid
      * @return CommentList|int
      */
-    public function CommentList($module, $type, $ownerid){
+    public function CommentList($module, $type, $ownerid, $fromCommentId = 0){
         if (($err = $this->IsCommentView($module, $type, $ownerid)) > 0){
             return $err;
         }
@@ -170,9 +201,21 @@ class CommentApp extends AbricosApplication {
         /** @var CommentList $list */
         $list = $this->InstanceClass('CommentList');
 
-        $rows = CommentQuery::CommentList($this->db, $module, $type, $ownerid);
+        $rows = CommentQuery::CommentList($this, $module, $type, $ownerid, $fromCommentId);
+        $maxCommentId = 0;
         while (($d = $this->db->fetch_array($rows))){
-            $list->Add($this->InstanceClass('Comment', $d));
+            /** @var Comment $comment */
+            $comment = $this->InstanceClass('Comment', $d);
+            $maxCommentId = max($maxCommentId, $comment->id);
+            $list->Add($comment);
+        }
+
+        if (Abricos::$user->id > 0){
+            $userview = CommentQuery::UserView($this, $module, $type, $ownerid);
+            if (!empty($userview)){
+                $list->userview = intval($userview['commentid']);
+            }
+            CommentQuery::UserViewSave($this, $module, $type, $ownerid, $maxCommentId);
         }
 
         return $list;
@@ -189,7 +232,7 @@ class CommentApp extends AbricosApplication {
         if (($err = $this->IsCommentView($module, $type, $ownerid)) > 0){
             return $err;
         }
-        $d = CommentQuery::Comment($this->db, $module, $type, $ownerid, $commentid);
+        $d = CommentQuery::Comment($this, $module, $type, $ownerid, $commentid);
         if (empty($d)){
             return 404;
         }
@@ -203,7 +246,7 @@ class CommentApp extends AbricosApplication {
      *
      */
     public function Statistic($module, $type, $ownerid){
-        $rows = CommentQuery::StatisticList($this->db, $module, $type, [$ownerid]);
+        $rows = CommentQuery::StatisticList($this, $module, $type, [$ownerid]);
         $d = $this->db->fetch_array($rows);
         if (empty($d)){
             return null;
@@ -222,7 +265,7 @@ class CommentApp extends AbricosApplication {
         /** @var CommentStatisticList $list */
         $list = $this->InstanceClass('StatisticList');
 
-        $rows = CommentQuery::StatisticList($this->db, $module, $type, $ownerids);
+        $rows = CommentQuery::StatisticList($this, $module, $type, $ownerids);
         while (($d = $this->db->fetch_array($rows))){
             $list->Add($this->InstanceClass('Statistic', $d));
         }

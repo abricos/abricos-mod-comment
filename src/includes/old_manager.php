@@ -16,30 +16,6 @@ require_once 'dbquery.php';
  */
 class CommentManager extends Ab_ModuleManager {
 
-    public function __construct(CommentModule $module){
-        parent::__construct($module);
-
-        $modURating = Abricos::GetModule("urating");
-        CommentManager::$isURating = !empty($modURating);
-    }
-
-    public function IsAdminRole(){
-        return $this->IsRoleEnable(CommentAction::ADMIN);
-    }
-
-    public function IsWriteRole(){
-        if ($this->IsAdminRole()){
-            return true;
-        }
-        return $this->IsRoleEnable(CommentAction::WRITE);
-    }
-
-    public function IsViewRole(){
-        if ($this->IsWriteRole()){
-            return true;
-        }
-        return $this->IsRoleEnable(CommentAction::VIEW);
-    }
 
 
     public function FullList($page, $limit){
@@ -62,7 +38,6 @@ class CommentManager extends Ab_ModuleManager {
         }
         CommentQuery::SpamSet($this->db, $commentId, $newStatus);
     }
-
 
     private function ContentManager($contentid){
         $cinfo = Ab_CoreQuery::ContentInfo($this->db, $contentid);
