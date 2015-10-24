@@ -10,7 +10,10 @@
 /**
  * Class CommentStatistic
  *
- * @property CommentFileList $files
+ * @property int $count
+ * @property int $lastid
+ * @property int $lastUserid
+ * @property int $lastDate
  */
 class CommentStatistic extends AbricosModel {
     protected $_structModule = 'comment';

@@ -12,7 +12,8 @@
     },
     "lastid": {
       "type": "int",
-      "json": "lcid"
+      "json": "lcid",
+      "dbField": "lastCommentid"
     },
     "lastUserid": {
       "type": "int",
@@ -20,7 +21,8 @@
     },
     "lastDate": {
       "type": "date",
-      "json": "lcdl"
+      "json": "lcdl",
+      "dbField": "lastCommentDate"
     }
   }
 }

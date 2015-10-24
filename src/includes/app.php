@@ -163,7 +163,7 @@ class CommentApp extends AbricosApplication {
         $commentid = CommentQuery::CommentAppend($this, $module, $type, $ownerid, $comment);
         $comment->id = $commentid;
 
-        CommentQuery::StatisticUpdate($this, $module, $type, $ownerid);
+        $this->StatisticUpdate($module, $type, $ownerid);
 
         return $comment;
     }
@@ -250,7 +250,6 @@ class CommentApp extends AbricosApplication {
      * @param string $module Owner Module
      * @param string $type Owner Ids Type (Field Name)
      * @param int|array[int] $ownerid Owner Id
-     *
      */
     public function Statistic($module, $type, $ownerid){
         $rows = CommentQuery::StatisticList($this, $module, $type, [$ownerid]);
@@ -277,6 +276,18 @@ class CommentApp extends AbricosApplication {
             $list->Add($this->InstanceClass('Statistic', $d));
         }
         return $list;
+    }
+
+    public function StatisticUpdate($module, $type, $ownerid){
+        CommentQuery::StatisticUpdate($this, $module, $type, $ownerid);
+
+        $statistic = $this->Statistic($module, $type, $ownerid);
+
+        if ($this->OwnerAppFunctionExist($module, 'Comment_OnStatisticUpdate')){
+            $ownerApp = $this->GetOwnerApp($module);
+            $ownerApp->Comment_OnStatisticUpdate($type, $ownerid, $statistic);
+        }
+        return $statistic;
     }
 }
 
