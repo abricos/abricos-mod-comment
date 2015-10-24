@@ -98,7 +98,50 @@ class CommentQuery {
         return $db->query_read($sql);
     }
 
-    public static function UserView(CommentApp $app, $module, $type, $ownerid) {
+    public static function StatisticUpdate(CommentApp $app, $module, $type, $ownerid){
+        $db = $app->db;
+        $sql = "
+			 INSERT INTO ".$db->prefix."comment_ownerstat (
+                ownerModule, ownerType, ownerid,
+                commentCount,
+                lastCommentid, lastUserid, lastCommentDate
+            )(
+                SELECT
+                    o.ownerModule,
+                    o.ownerType,
+                    o.ownerid,
+                    o1.cnt,
+                    o.commentid,
+                    o.userid,
+                    o.dateline
+                FROM ".$db->prefix."comment_owner o
+                JOIN (
+                    SELECT
+                        ownerModule,
+                        ownerType,
+                        ownerid,
+                        count(commentid) as cnt,
+                        max(commentid) as lastid
+                    FROM ".$db->prefix."comment_owner
+                    WHERE ownerModule='".bkstr($module)."'
+                        AND ownerType='".bkstr($type)."'
+                        AND ownerid=".intval($ownerid)."
+                    GROUP BY ownerModule, ownerType, ownerid
+                ) as o1 ON o.ownerModule=o1.ownerModule
+                        AND o.ownerType=o1.ownerType
+                        AND o.ownerid=o1.ownerid
+                        AND o.commentid=o1.lastid
+            )
+            ON DUPLICATE KEY UPDATE
+                commentCount=o1.cnt,
+                lastCommentid=o.commentid,
+                lastUserid=o.userid,
+                lastCommentDate=o.dateline
+		";
+        return $db->query_read($sql);
+    }
+
+    public static function UserView(CommentApp $app, $module, $type, $ownerid){
         $db = $app->db;
         $sql = "
 			SELECT *

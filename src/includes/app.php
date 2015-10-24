@@ -163,6 +163,8 @@ class CommentApp extends AbricosApplication {
         $commentid = CommentQuery::CommentAppend($this, $module, $type, $ownerid, $comment);
         $comment->id = $commentid;
 
+        CommentQuery::StatisticUpdate($this, $module, $type, $ownerid);
+
         return $comment;
     }
 
@@ -276,7 +278,6 @@ class CommentApp extends AbricosApplication {
         }
         return $list;
     }
-
 }
 
 ?>

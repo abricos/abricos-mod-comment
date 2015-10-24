@@ -156,13 +156,24 @@ if ($updateManager->isUpdate('0.4.3') && !$updateManager->isInstall()){
             o.ownerModule,
             o.ownerType,
             o.ownerid,
-            count(o.commentid),
+            o1.cnt,
             o.commentid,
             o.userid,
             o.dateline
         FROM ".$pfx."comment_owner o
-        GROUP BY ownerModule, ownerType, ownerid
-        ORDER BY o.dateline DESC
+        JOIN (
+            SELECT
+                ownerModule,
+                ownerType,
+                ownerid,
+                count(commentid) as cnt,
+                max(commentid) as lastid
+            FROM ".$pfx."comment_owner
+            GROUP BY ownerModule, ownerType, ownerid
+        ) as o1 ON o.ownerModule=o1.ownerModule
+                AND o.ownerType=o1.ownerType
+                AND o.ownerid=o1.ownerid
+                AND o.commentid=o1.lastid
     ");
 
     $db->query_write("DROP TABLE IF EXISTS ".$pfx."cmt_comment");
