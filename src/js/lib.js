@@ -15,6 +15,14 @@ Component.entryPoint = function(NS){
     });
 
     SYS.Application.build(COMPONENT, {}, {
+        ownerCreate: function(module, type, ownerid){
+            var Owner = this.get('Owner'),
+                owner = new Owner({appInstance: this});
+            owner.set('module', module);
+            owner.set('type', type);
+            owner.set('ownerid', ownerid);
+            return owner;
+        },
         initializer: function(){
             var instance = this;
             this.appStructure(function(){
@@ -27,9 +35,15 @@ Component.entryPoint = function(NS){
         APPS: {
             uprofile: {}
         },
+        ATTRS: {
+            Owner: {value: NS.Owner},
+            OwnerList: {value: NS.OwnerList},
+            Comment: {value: NS.Comment},
+            CommentList: {value: NS.CommentList}
+        },
         REQS: {
             commentList: {
-                args: ['module', 'type', 'ownerid'],
+                args: ['owner'],
                 attribute: false,
                 type: 'modelList:CommentList',
                 onResponse: function(commentList, srcData){
@@ -54,17 +68,13 @@ Component.entryPoint = function(NS){
                 }
             },
             replyPreview: {
-                args: ['module', 'type', 'ownerid', 'reply'],
+                args: ['owner', 'reply'],
                 type: 'model:Comment'
             },
             reply: {
-                args: ['module', 'type', 'ownerid', 'reply'],
+                args: ['owner', 'reply'],
                 type: 'model:Comment'
             }
-        },
-        ATTRS: {
-            Comment: {value: NS.Comment},
-            CommentList: {value: NS.CommentList}
         }
     });
 

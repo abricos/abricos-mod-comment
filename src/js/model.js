@@ -8,6 +8,34 @@ Component.entryPoint = function(NS){
     var Y = Brick.YUI,
         SYS = Brick.mod.sys;
 
+    var isOwner = function(val){
+        if (!val || !Y.Lang.isFunction(val.get)){
+            return false;
+        }
+        return true;
+    };
+
+    NS.Owner = Y.Base.create('owner', SYS.AppModel, [], {
+        structureName: 'Owner',
+        compare: function(val){
+            if (NS.Owner.isOwner(val)){
+                return false;
+            }
+            return val.get('module') === this.get('module')
+                && val.get('type') === this.get('type')
+                && val.get('ownerid') === this.get('ownerid');
+        }
+    }, {
+        ATTRIBUTE: {
+           validator: isOwner
+        },
+        isOwner: isOwner
+    });
+
+    NS.OwnerList = Y.Base.create('ownerList', SYS.AppModelList, [], {
+        appItem: NS.Owner
+    });
+
     NS.Statistic = Y.Base.create('statistic', SYS.AppModel, [], {
         structureName: 'Statistic'
     }, {
@@ -32,9 +60,7 @@ Component.entryPoint = function(NS){
         appItem: NS.Comment
     }, {
         ATTRS: {
-            ownerModule: {},
-            ownerType: {},
-            ownerid: {}
+            commentOwner: NS.Owner.ATTRIBUTE
         }
     });
 };

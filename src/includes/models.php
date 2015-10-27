@@ -8,6 +8,28 @@
  */
 
 /**
+ * Class CommentOwner
+ *
+ * @property string $module
+ * @property string $type
+ * @property int $ownerid
+ */
+class CommentOwner extends AbricosModel {
+    protected $_structModule = 'comment';
+    protected $_structName = 'Owner';
+}
+
+/**
+ * Class CommentOwnerList
+ *
+ * @method CommentOwner Get($id)
+ * @method CommentOwner GetByIndex($index)
+ */
+class CommentOwnerList extends AbricosModelList {
+}
+
+
+/**
  * Class CommentStatistic
  *
  * @property int $count
@@ -22,7 +44,7 @@ class CommentStatistic extends AbricosModel {
 
 /**
  * Class CommentStatisticList
- * @method CommentStatistic Get($topicid)
+ * @method CommentStatistic Get($id)
  * @method CommentStatistic GetByIndex($index)
  */
 class CommentStatisticList extends AbricosModelList {
@@ -55,16 +77,15 @@ class CommentList extends AbricosModelList {
      */
     public $userview = 0;
 
-    public $ownerModule = '';
-    public $ownerType = '';
-    public $ownerid = 0;
+    /**
+     * @var CommentOwner
+     */
+    public $owner;
 
     public function ToJSON(){
         $ret = parent::ToJSON();
         $ret->userview = $this->userview;
-        $ret->ownerModule = $this->ownerModule;
-        $ret->ownerType = $this->ownerType;
-        $ret->ownerid = $this->ownerid;
+        $ret->owner = $this->owner->ToJSON();
         return $ret;
     }
 }

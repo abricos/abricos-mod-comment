@@ -19,6 +19,7 @@ class CommentApp extends AbricosApplication {
 
     protected function GetClasses(){
         return array(
+            'Owner' => 'CommentOwner',
             'Statistic' => 'CommentStatistic',
             'StatisticList' => 'CommentStatisticList',
             'Comment' => 'Comment',
@@ -27,17 +28,17 @@ class CommentApp extends AbricosApplication {
     }
 
     protected function GetStructures(){
-        return 'Statistic,Comment';
+        return 'Owner,Statistic,Comment';
     }
 
     public function ResponseToJSON($d){
         switch ($d->do){
             case 'reply':
-                return $this->ReplyToJSON($d->module, $d->type, $d->ownerid, $d->reply);
+                return $this->ReplyToJSON($d->owner, $d->reply);
             case 'replyPreview':
-                return $this->ReplyPreviewToJSON($d->module, $d->type, $d->ownerid, $d->reply);
+                return $this->ReplyPreviewToJSON($d->owner, $d->reply);
             case 'commentList':
-                return $this->CommentListToJSON($d->module, $d->type, $d->ownerid);
+                return $this->CommentListToJSON($d->owner);
         }
         return null;
     }
@@ -51,6 +52,18 @@ class CommentApp extends AbricosApplication {
 
     public function CacheClean(){
         $this->_cache = array();
+    }
+
+    /**
+     * @param $owner
+     * @return CommentOwner
+     */
+    public function OwnerNormalize($owner){
+        if ($owner instanceof CommentOwner){
+            return $owner;
+        }
+
+        return $this->InstanceClass('Owner', $owner);
     }
 
     private function GetOwnerApp($moduleName){
@@ -85,23 +98,25 @@ class CommentApp extends AbricosApplication {
         return true;
     }
 
-    public function IsCommentView($module, $type, $ownerid){
-        if (!$this->OwnerAppFunctionExist($module, 'Comment_IsList')){
+    public function IsCommentView(CommentOwner $owner){
+        $owner = $this->OwnerNormalize($owner);
+        if (!$this->OwnerAppFunctionExist($owner->module, 'Comment_IsList')){
             return 500;
         }
-        $ownerApp = $this->GetOwnerApp($module);
-        if (!$ownerApp->Comment_IsList($type, $ownerid)){
+        $ownerApp = $this->GetOwnerApp($owner->module);
+        if (!$ownerApp->Comment_IsList($owner->type, $owner->ownerid)){
             return 403;
         }
         return 0;
     }
 
-    public function IsCommentWrite($module, $type, $ownerid){
-        if (!$this->OwnerAppFunctionExist($module, 'Comment_IsWrite')){
+    public function IsCommentWrite(CommentOwner $owner){
+        $owner = $this->OwnerNormalize($owner);
+        if (!$this->OwnerAppFunctionExist($owner->module, 'Comment_IsWrite')){
             return 500;
         }
-        $ownerApp = $this->GetOwnerApp($module);
-        if (!$ownerApp->Comment_IsWrite($type, $ownerid)){
+        $ownerApp = $this->GetOwnerApp($owner->module);
+        if (!$ownerApp->Comment_IsWrite($owner->type, $owner->ownerid)){
             return 403;
         }
         return 0;
@@ -114,12 +129,14 @@ class CommentApp extends AbricosApplication {
      * @param $d
      * @return Comment
      */
-    private function ReplyParser($module, $type, $ownerid, $d){
+    private function ReplyParser($owner, $d){
+        $owner = $this->OwnerNormalize($owner);
+
         /** @var Comment $comment */
         $comment = $this->InstanceClass('Comment', $d);
 
         if ($comment->parentid > 0){
-            $parentComment = $this->Comment($module, $type, $ownerid, $comment->parentid);
+            $parentComment = $this->Comment($owner, $comment->parentid);
             if (is_integer($parentComment)){
                 return null;
             }
@@ -137,48 +154,48 @@ class CommentApp extends AbricosApplication {
         return $comment;
     }
 
-    public function ReplyToJSON($module, $type, $ownerid, $d){
-        $comment = $this->Reply($module, $type, $ownerid, $d);
+    public function ReplyToJSON($owner, $d){
+        $comment = $this->Reply($owner, $d);
         $ret = $this->ResultToJSON('reply', $comment);
 
         if (!is_integer($comment)){
             $ret = $this->ImplodeJSON(
-                $this->CommentListToJSON($module, $type, $ownerid, $comment->id - 1),
+                $this->CommentListToJSON($owner, $comment->id - 1),
                 $ret
             );
         }
         return $ret;
     }
 
-    public function Reply($module, $type, $ownerid, $d){
-        if (($err = $this->IsCommentWrite($module, $type, $ownerid)) > 0){
+    public function Reply($owner, $d){
+        if (($err = $this->IsCommentWrite($owner)) > 0){
             return $err;
         }
 
-        $comment = $this->ReplyParser($module, $type, $ownerid, $d);
+        $comment = $this->ReplyParser($owner, $d);
         if (empty($comment)){
             return 400;
         }
 
-        $commentid = CommentQuery::CommentAppend($this, $module, $type, $ownerid, $comment);
+        $commentid = CommentQuery::CommentAppend($this, $owner, $comment);
         $comment->id = $commentid;
 
-        $this->StatisticUpdate($module, $type, $ownerid);
+        $this->StatisticUpdate($owner);
 
         return $comment;
     }
 
-    public function ReplyPreviewToJSON($module, $type, $ownerid, $d){
-        $ret = $this->ReplyPreview($module, $type, $ownerid, $d);
+    public function ReplyPreviewToJSON($owner, $d){
+        $ret = $this->ReplyPreview($owner, $d);
         return $this->ResultToJSON('replyPreview', $ret);
     }
 
-    public function ReplyPreview($module, $type, $ownerid, $d){
-        if (($err = $this->IsCommentWrite($module, $type, $ownerid)) > 0){
+    public function ReplyPreview($owner, $d){
+        if (($err = $this->IsCommentWrite($owner)) > 0){
             return $err;
         }
 
-        $comment = $this->ReplyParser($module, $type, $ownerid, $d);
+        $comment = $this->ReplyParser($owner, $d);
         if (empty($comment)){
             return 400;
         }
@@ -186,8 +203,8 @@ class CommentApp extends AbricosApplication {
         return $comment;
     }
 
-    public function CommentListToJSON($module, $type, $ownerid, $fromCommentId = 0){
-        $ret = $this->CommentList($module, $type, $ownerid, $fromCommentId);
+    public function CommentListToJSON($owner, $fromCommentId = 0){
+        $ret = $this->CommentList($owner, $fromCommentId);
         return $this->ResultToJSON('commentList', $ret);
     }
 
@@ -197,18 +214,18 @@ class CommentApp extends AbricosApplication {
      * @param $ownerid
      * @return CommentList|int
      */
-    public function CommentList($module, $type, $ownerid, $fromCommentId = 0){
-        if (($err = $this->IsCommentView($module, $type, $ownerid)) > 0){
+    public function CommentList($owner, $fromCommentId = 0){
+        $owner = $this->OwnerNormalize($owner);
+
+        if (($err = $this->IsCommentView($owner)) > 0){
             return $err;
         }
 
         /** @var CommentList $list */
         $list = $this->InstanceClass('CommentList');
-        $list->ownerModule = $module;
-        $list->ownerType = $type;
-        $list->ownerid = $ownerid;
+        $list->owner = $owner;
 
-        $rows = CommentQuery::CommentList($this, $module, $type, $ownerid, $fromCommentId);
+        $rows = CommentQuery::CommentList($this, $owner, $fromCommentId);
         $maxCommentId = 0;
         while (($d = $this->db->fetch_array($rows))){
             /** @var Comment $comment */
@@ -218,11 +235,11 @@ class CommentApp extends AbricosApplication {
         }
 
         if (Abricos::$user->id > 0){
-            $userview = CommentQuery::UserView($this, $module, $type, $ownerid);
+            $userview = CommentQuery::UserView($this, $owner);
             if (!empty($userview)){
                 $list->userview = intval($userview['commentid']);
             }
-            CommentQuery::UserViewSave($this, $module, $type, $ownerid, $maxCommentId);
+            CommentQuery::UserViewSave($this, $owner, $maxCommentId);
         }
 
         return $list;
@@ -235,11 +252,13 @@ class CommentApp extends AbricosApplication {
      * @param $commentid
      * @return Comment|int
      */
-    public function Comment($module, $type, $ownerid, $commentid){
-        if (($err = $this->IsCommentView($module, $type, $ownerid)) > 0){
+    public function Comment($owner, $commentid){
+        $owner = $this->OwnerNormalize($owner);
+
+        if (($err = $this->IsCommentView($owner)) > 0){
             return $err;
         }
-        $d = CommentQuery::Comment($this, $module, $type, $ownerid, $commentid);
+        $d = CommentQuery::Comment($this, $owner, $commentid);
         if (empty($d)){
             return 404;
         }

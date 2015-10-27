@@ -15,9 +15,7 @@ Component.entryPoint = function(NS){
     };
     ExtCommentList.NAME = 'extCommentList';
     ExtCommentList.ATTRS = {
-        ownerModule: {validator: Y.Lang.isString},
-        ownerType: {validator: Y.Lang.isString},
-        ownerid: {validator: Y.Lang.isNumber, value: 0},
+        commentOwner: NS.Owner.ATTRIBUTE,
         parentWidget: {},
         rootWidget: {
             readOnly: true,
@@ -69,6 +67,8 @@ Component.entryPoint = function(NS){
                 commentid = this.get('commentid'),
                 parentWidget = this;
 
+            console.log(readOnly);
+
             commentList.each(function(comment){
                 if (comment.get('parentid') !== commentid){
                     return;
@@ -76,10 +76,8 @@ Component.entryPoint = function(NS){
 
                 var w = new NS.CommentItemWidget({
                     boundingBox: tp.append('list', '<div></div>'),
-                    ownerModule: this.get('ownerModule'),
-                    ownerType: this.get('ownerType'),
-                    ownerid: this.get('ownerid'),
                     parentWidget: parentWidget,
+                    commentOwner: this.get('commentOwner'),
                     commentid: comment.get('id'),
                     commentList: commentList,
                     readOnly: readOnly
@@ -142,13 +140,11 @@ Component.entryPoint = function(NS){
             };
         },
         replySend: function(){
-            var ownerModule = this.get('ownerModule'),
-                ownerType = this.get('ownerType'),
-                ownerid = this.get('ownerid'),
+            var owner = this.get('commentOwner').toJSON(),
                 reply = this.replyToJSON();
 
             this.set('waiting', true);
-            this.get('appInstance').reply(ownerModule, ownerType, ownerid, reply, function(err, result){
+            this.get('appInstance').reply(owner, reply, function(err, result){
                 this.set('waiting', false);
                 if (!err){
                     this.replyClose();
@@ -156,13 +152,11 @@ Component.entryPoint = function(NS){
             }, this);
         },
         replyPreview: function(){
-            var ownerModule = this.get('ownerModule'),
-                ownerType = this.get('ownerType'),
-                ownerid = this.get('ownerid'),
+            var owner = this.get('commentOwner').toJSON(),
                 reply = this.replyToJSON();
 
             this.set('waiting', true);
-            this.get('appInstance').replyPreview(ownerModule, ownerType, ownerid, reply, function(err, result){
+            this.get('appInstance').replyPreview(owner, reply, function(err, result){
                 this.set('waiting', false);
                 if (!err){
                     this.setPreview(result.replyPreview);
@@ -224,11 +218,9 @@ Component.entryPoint = function(NS){
         onInitAppWidget: function(err, appInstance){
             this.set('waiting', true);
 
-            var ownerModule = this.get('ownerModule'),
-                ownerType = this.get('ownerType'),
-                ownerid = this.get('ownerid')
+            var owner = this.get('commentOwner');
 
-            appInstance.commentList(ownerModule, ownerType, ownerid, function(err, result){
+            appInstance.commentList(owner.toJSON(), function(err, result){
                 this.set('waiting', false);
                 if (!err){
                     this.set('commentList', result.commentList);
@@ -246,9 +238,8 @@ Component.entryPoint = function(NS){
                 return;
             }
             var commentList = e.result.commentList;
-            if (commentList.get('ownerModule') !== this.get('ownerModule')
-                || commentList.get('ownerType') !== this.get('ownerType')
-                || commentList.get('ownerid') !== this.get('ownerid')){
+
+            if (!this.get('commentOwner').compare(commentList.get('commentOwner'))){
                 return;
             }
             this.renderCommentList(commentList);
@@ -256,16 +247,13 @@ Component.entryPoint = function(NS){
         renderCommentList: function(newCommentList){
             var tp = this.template,
                 commentList = this.get('commentList'),
-                readOnly = this.get('readOnly'),
                 count = commentList.size();
 
             if (newCommentList){
                 count += newCommentList.size();
             }
 
-            tp.setHTML({
-                count: count
-            });
+            tp.setHTML({count: count});
 
             this._renderCommentList(newCommentList);
         }
