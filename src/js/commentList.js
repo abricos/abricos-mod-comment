@@ -67,8 +67,6 @@ Component.entryPoint = function(NS){
                 commentid = this.get('commentid'),
                 parentWidget = this;
 
-            console.log(readOnly);
-
             commentList.each(function(comment){
                 if (comment.get('parentid') !== commentid){
                     return;
@@ -98,6 +96,12 @@ Component.entryPoint = function(NS){
             for (var i = 0; i < ws.length; i++){
                 fn.call(context || this, ws[i]);
             }
+        },
+        setReadOnly: function(readOnly){
+            this.template.toggleView(!readOnly, 'replyButton');
+            this.each(function(w){
+                w.setReadOnly(readOnly);
+            }, this);
         },
         replyClose: function(){
             this.each(function(w){
@@ -224,10 +228,12 @@ Component.entryPoint = function(NS){
                 this.set('waiting', false);
                 if (!err){
                     this.set('commentList', result.commentList);
+                    this.renderCommentList();
+                    appInstance.on('appResponses', this._onAppResponses, this);
+                    this.on('readOnlyChange', function(e){
+                        this.setReadOnly(e.newVal);
+                    }, this);
                 }
-                this.renderCommentList();
-
-                appInstance.on('appResponses', this._onAppResponses, this);
             }, this);
         },
         destructor: function(){
