@@ -98,7 +98,7 @@ class CommentApp extends AbricosApplication {
         return true;
     }
 
-    public function IsCommentView(CommentOwner $owner){
+    public function IsCommentView($owner){
         $owner = $this->OwnerNormalize($owner);
         if (!$this->OwnerAppFunctionExist($owner->module, 'Comment_IsList')){
             return 500;
@@ -110,7 +110,7 @@ class CommentApp extends AbricosApplication {
         return 0;
     }
 
-    public function IsCommentWrite(CommentOwner $owner){
+    public function IsCommentWrite($owner){
         $owner = $this->OwnerNormalize($owner);
         if (!$this->OwnerAppFunctionExist($owner->module, 'Comment_IsWrite')){
             return 500;
@@ -168,6 +168,8 @@ class CommentApp extends AbricosApplication {
     }
 
     public function Reply($owner, $d){
+        $owner = $this->OwnerNormalize($owner);
+
         if (($err = $this->IsCommentWrite($owner)) > 0){
             return $err;
         }
@@ -254,7 +256,6 @@ class CommentApp extends AbricosApplication {
      */
     public function Comment($owner, $commentid){
         $owner = $this->OwnerNormalize($owner);
-
         if (($err = $this->IsCommentView($owner)) > 0){
             return $err;
         }
@@ -270,8 +271,8 @@ class CommentApp extends AbricosApplication {
      * @param string $type Owner Ids Type (Field Name)
      * @param int|array[int] $ownerid Owner Id
      */
-    public function Statistic($module, $type, $ownerid){
-        $rows = CommentQuery::StatisticList($this, $module, $type, [$ownerid]);
+    public function Statistic(CommentOwner $owner){
+        $rows = CommentQuery::StatisticList($this, $owner->module, $owner->type, [$owner->ownerid]);
         $d = $this->db->fetch_array($rows);
         if (empty($d)){
             return null;
@@ -297,14 +298,16 @@ class CommentApp extends AbricosApplication {
         return $list;
     }
 
-    public function StatisticUpdate($module, $type, $ownerid){
-        CommentQuery::StatisticUpdate($this, $module, $type, $ownerid);
+    public function StatisticUpdate($owner){
+        $owner = $this->OwnerNormalize($owner);
 
-        $statistic = $this->Statistic($module, $type, $ownerid);
+        CommentQuery::StatisticUpdate($this, $owner);
 
-        if ($this->OwnerAppFunctionExist($module, 'Comment_OnStatisticUpdate')){
-            $ownerApp = $this->GetOwnerApp($module);
-            $ownerApp->Comment_OnStatisticUpdate($type, $ownerid, $statistic);
+        $statistic = $this->Statistic($owner);
+
+        if ($this->OwnerAppFunctionExist($owner->module, 'Comment_OnStatisticUpdate')){
+            $ownerApp = $this->GetOwnerApp($owner->module);
+            $ownerApp->Comment_OnStatisticUpdate($owner->type, $owner->ownerid, $statistic);
         }
         return $statistic;
     }

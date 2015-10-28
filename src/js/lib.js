@@ -16,8 +16,13 @@ Component.entryPoint = function(NS){
 
     SYS.Application.build(COMPONENT, {}, {
         ownerCreate: function(module, type, ownerid){
-            var Owner = this.get('Owner'),
-                owner = new Owner({appInstance: this});
+            var Owner = this.get('Owner');
+
+            if (Y.Lang.isObject(module)){
+                return new Owner(Y.merge(module, {appInstance: this}));
+            }
+
+            var owner = new Owner({appInstance: this});
             owner.set('module', module);
             owner.set('type', type);
             owner.set('ownerid', ownerid);
@@ -47,9 +52,8 @@ Component.entryPoint = function(NS){
                 attribute: false,
                 type: 'modelList:CommentList',
                 onResponse: function(commentList, srcData){
-                    commentList.set('ownerModule', srcData.ownerModule);
-                    commentList.set('ownerType', srcData.ownerType);
-                    commentList.set('ownerid', srcData.ownerid);
+                    commentList.set('commentOwner', this.ownerCreate(srcData.owner));
+
                     var userIds = commentList.toArray('userid', {distinct: true});
                     if (userIds.length === 0){
                         return;

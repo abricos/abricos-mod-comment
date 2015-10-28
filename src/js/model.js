@@ -18,7 +18,7 @@ Component.entryPoint = function(NS){
     NS.Owner = Y.Base.create('owner', SYS.AppModel, [], {
         structureName: 'Owner',
         compare: function(val){
-            if (NS.Owner.isOwner(val)){
+            if (!NS.Owner.isOwner(val)){
                 return false;
             }
             return val.get('module') === this.get('module')

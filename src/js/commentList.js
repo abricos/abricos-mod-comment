@@ -262,6 +262,11 @@ Component.entryPoint = function(NS){
             tp.setHTML({count: count});
 
             this._renderCommentList(newCommentList);
+            if (newCommentList){
+                newCommentList.each(function(comment){
+                    commentList.add(comment);
+                }, this);
+            }
         }
     }, {
         ATTRS: {
