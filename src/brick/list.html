@@ -1,0 +1,32 @@
+<!--[*]
+[script]brick/list.php[/script]
+[mcss=comment]comment.css[/mcss]
+
+[v=item]
+<div data-id="{v#commentid}" class="comment">
+    <div class="info">
+        <a href="{v#userURI}" class="avatar pull-left">
+            <img class="img-rounded" src="{v#userAvatar}"/>
+        </a>
+
+        <a href="{v#userURI}" class="viewName pull-left">{v#userName}</a>
+
+        <div class="date pull-left">{v#date}</div>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="commentBody">
+        <div class="text">{v#body}</div>
+    </div>
+
+    {v#list}
+</div>
+[/v]
+
+[*]-->
+<div class="aw-comment commentList">
+    <h3>Комментарии (<span>{v#count}</span>)</h3>
+
+    {v#list}
+</div>

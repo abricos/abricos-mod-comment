@@ -40,6 +40,11 @@ class CommentOwnerList extends AbricosModelList {
 class CommentStatistic extends AbricosModel {
     protected $_structModule = 'comment';
     protected $_structName = 'Statistic';
+
+    /**
+     * @var UProfileUser
+     */
+    public $lastUser;
 }
 
 /**
@@ -53,6 +58,8 @@ class CommentStatisticList extends AbricosModelList {
 /**
  * Class Comment
  *
+ * @property CommentApp $app
+ *
  * @property int $parentid
  * @property int $userid
  * @property string $body
@@ -61,6 +68,21 @@ class CommentStatisticList extends AbricosModelList {
 class Comment extends AbricosModel {
     protected $_structModule = 'comment';
     protected $_structName = 'Comment';
+
+    /**
+     * @var UProfileUser
+     */
+    public $user;
+
+    /**
+     * @param UProfileUserList $userList
+     */
+    public function FillUsers($userList = null){
+        if (empty($userList)){
+            $userList = $this->app->UProfileApp()->UserListByIds($this->userid);
+        }
+        $this->user = $userList->Get($this->userid);
+    }
 }
 
 /**
@@ -81,6 +103,22 @@ class CommentList extends AbricosModelList {
      * @var CommentOwner
      */
     public $owner;
+
+    public function FillUsers(){
+        $count = $this->Count();
+        $userids = array();
+        for ($i = 0; $i < $count; $i++){
+            $comment = $this->GetByIndex($i);
+            $userids[] = $comment->userid;
+        }
+
+        $userList = $this->app->UProfileApp()->UserListByIds($userids);
+
+        for ($i = 0; $i < $count; $i++){
+            $comment = $this->GetByIndex($i);
+            $comment->FillUsers($userList);
+        }
+    }
 
     public function ToJSON(){
         $ret = parent::ToJSON();

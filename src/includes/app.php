@@ -43,6 +43,20 @@ class CommentApp extends AbricosApplication {
         return null;
     }
 
+    private $_uprofileApp = null;
+
+    /**
+     * @return UProfileApp
+     */
+    public function UProfileApp(){
+        if (!is_null($this->_uprofileApp)){
+            return $this->_uprofileApp;
+        }
+        $module = Abricos::GetModule('uprofile');
+        return $this->_uprofileApp = $module->GetManager()->GetApp();
+    }
+
+    // TODO: release
     public function IsRaiting(){
         $modURating = Abricos::GetModule("urating");
         return !empty($modURating);
