@@ -8,7 +8,7 @@
  */
 
 
-function CommentApp_BuildCommentList(CommentList $list, Ab_CoreBrick $brick, $parentid){
+function CommentApp_BuildCommentTree(CommentList $list, Ab_CoreBrick $brick, $parentid){
     $count = $list->Count();
     $lst = "";
     for ($i = 0; $i < $count; $i++){
@@ -18,6 +18,7 @@ function CommentApp_BuildCommentList(CommentList $list, Ab_CoreBrick $brick, $pa
         }
 
         $replace = array(
+            "id" => $comment->id,
             "userURI" => "",
             "userName" => "",
             "userAvatar" => "",
@@ -32,7 +33,7 @@ function CommentApp_BuildCommentList(CommentList $list, Ab_CoreBrick $brick, $pa
             $replace["userAvatar"] = $user->GetAvatar45();
         }
 
-        $replace['list'] = CommentApp_BuildCommentList($list, $brick, $comment->id);
+        $replace['list'] = CommentApp_BuildCommentTree($list, $brick, $comment->id);
         $lst .= Brick::ReplaceVarByData($brick->param->var['item'], $replace);
     }
 

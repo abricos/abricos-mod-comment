@@ -1,0 +1,57 @@
+<!--[*]
+[script]brick/tree.php[/script]
+[mcss=comment]comment.css[/mcss]
+
+[v=item]
+<div data-id="{v#id}" class="comment">
+    <div class="info">
+        <a href="{v#userURI}" class="avatar pull-left">
+            <img class="img-rounded" src="{v#userAvatar}"/>
+        </a>
+
+        <a href="{v#userURI}" class="viewName pull-left">{v#userName}</a>
+
+        <div class="date pull-left">{v#date}</div>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="commentBody">
+        <div class="text">{v#body}</div>
+    </div>
+
+    {v#list}
+</div>
+[/v]
+
+[*]-->
+<div id="{v#brickid}" class="aw-comment commentTree">
+    <h3>Комментарии (<span>{v#count}</span>)</h3>
+    {v#tree}
+</div>
+<div id="{v#brickid}-widget" class="aw-comment commentTree hide"></div>
+
+<script>
+    if (Brick.env.user.id * 1 > 0 && false){
+        Brick.use('comment', 'commentTree', function(err, NS){
+            var Y = Brick.YUI;
+
+            new NS.CommentTreeWidget({
+                boundingBox: '#{v#brickid}-widget',
+                commentOwner: {
+                    module: '{v#ownerModule}',
+                    type: '{v#ownerType}',
+                    ownerid: '{v#ownerid}' | 0
+                },
+                onInitCallback: function(err){
+                    if (err){
+                        return;
+                    }
+                    Y.one('#{v#brickid}-widget').removeClass('hide');
+                    Y.one('#{v#brickid}').addClass('hide');
+                }
+            });
+        });
+
+    }
+</script>

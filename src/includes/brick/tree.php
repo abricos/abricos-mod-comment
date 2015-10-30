@@ -35,7 +35,11 @@ if (is_integer($commentList)){
 
 $brick->content = Brick::ReplaceVarByData($brick->content, array(
     "count" => $commentList->Count(),
-    "list" => CommentApp_BuildCommentList($commentList, $brick, 0)
+    "brickid" => $brick->id,
+    "ownerModule" => $p['module'],
+    "ownerType" => $p['type'],
+    "ownerid" => $p['ownerid'],
+    "tree" => CommentApp_BuildCommentTree($commentList, $brick, 0)
 ));
 
 ?>

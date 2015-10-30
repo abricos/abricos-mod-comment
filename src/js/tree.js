@@ -11,10 +11,10 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
         SYS = Brick.mod.sys;
 
-    var ExtCommentList = function(){
+    var ExtCommentTree = function(){
     };
-    ExtCommentList.NAME = 'extCommentList';
-    ExtCommentList.ATTRS = {
+    ExtCommentTree.NAME = 'extCommentList';
+    ExtCommentTree.ATTRS = {
         commentOwner: NS.Owner.ATTRIBUTE,
         parentWidget: {},
         rootWidget: {
@@ -44,7 +44,7 @@ Component.entryPoint = function(NS){
         },
         readOnly: {value: true}
     };
-    ExtCommentList.prototype = {
+    ExtCommentTree.prototype = {
         initializer: function(){
             this._widgets = [];
         },
@@ -72,7 +72,7 @@ Component.entryPoint = function(NS){
                     return;
                 }
 
-                var w = new NS.CommentItemWidget({
+                var w = new NS.CommentTreeWidget.ItemWidget({
                     boundingBox: tp.append('list', '<div></div>'),
                     parentWidget: parentWidget,
                     commentOwner: this.get('commentOwner'),
@@ -189,35 +189,10 @@ Component.entryPoint = function(NS){
             }
         }
     };
-    NS.ExtCommentList = ExtCommentList;
+    NS.ExtCommentTree = ExtCommentTree;
 
-    NS.CommentItemWidget = Y.Base.create('commentItemWidget', SYS.AppWidget, [
-        NS.ExtCommentList
-    ], {
-        onInitAppWidget: function(err, appInstance){
-            var tp = this.template,
-                comment = this.get('comment'),
-                user = comment.get('user');
-
-            tp.setHTML({
-                aViewName: user.get('viewName'),
-                date: Brick.dateExt.convert(comment.get('dateline')),
-                body: comment.get('body')
-            });
-
-            tp.one('avatarSrc').set('src', user.get('avatarSrc45'));
-
-            this._renderCommentList();
-        }
-    }, {
-        ATTRS: {
-            component: {value: COMPONENT},
-            templateBlockName: {value: 'item,reply'}
-        }
-    });
-
-    NS.CommentListWidget = Y.Base.create('commentListWidget', SYS.AppWidget, [
-        NS.ExtCommentList
+    NS.CommentTreeWidget = Y.Base.create('commentListWidget', SYS.AppWidget, [
+        NS.ExtCommentTree
     ], {
         onInitAppWidget: function(err, appInstance){
             this.set('waiting', true);
@@ -271,8 +246,35 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,reply'}
+            templateBlockName: {value: 'widget,reply'},
+            useExistingWidget: {value: false}
         }
     });
+
+    NS.CommentTreeWidget.ItemWidget = Y.Base.create('itemWidget', SYS.AppWidget, [
+        NS.ExtCommentTree
+    ], {
+        onInitAppWidget: function(err, appInstance){
+            var tp = this.template,
+                comment = this.get('comment'),
+                user = comment.get('user');
+
+            tp.setHTML({
+                aViewName: user.get('viewName'),
+                date: Brick.dateExt.convert(comment.get('dateline')),
+                body: comment.get('body')
+            });
+
+            tp.one('avatarSrc').set('src', user.get('avatarSrc45'));
+
+            this._renderCommentList();
+        }
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'item,reply'}
+        }
+    });
+
 
 };
