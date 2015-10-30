@@ -48,7 +48,7 @@ Component.entryPoint = function(NS){
         },
         REQS: {
             commentList: {
-                args: ['owner'],
+                args: ['options'],
                 attribute: false,
                 type: 'modelList:CommentList',
                 onResponse: function(commentList, srcData){

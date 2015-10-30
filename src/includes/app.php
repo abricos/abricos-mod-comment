@@ -38,7 +38,7 @@ class CommentApp extends AbricosApplication {
             case 'replyPreview':
                 return $this->ReplyPreviewToJSON($d->owner, $d->reply);
             case 'commentList':
-                return $this->CommentListToJSON($d->owner);
+                return $this->CommentListToJSON($d->options);
         }
         return null;
     }
@@ -124,6 +124,10 @@ class CommentApp extends AbricosApplication {
         return 0;
     }
 
+    /**
+     * @param $owner
+     * @return int Error code: 0-not error
+     */
     public function IsCommentWrite($owner){
         $owner = $this->OwnerNormalize($owner);
         if (!$this->OwnerAppFunctionExist($owner->module, 'Comment_IsWrite')){
@@ -219,19 +223,18 @@ class CommentApp extends AbricosApplication {
         return $comment;
     }
 
-    public function CommentListToJSON($owner, $fromCommentId = 0){
-        $ret = $this->CommentList($owner, $fromCommentId);
+    public function CommentListToJSON($options, $fromCommentId = 0){
+        $ret = $this->CommentList($options, $fromCommentId);
         return $this->ResultToJSON('commentList', $ret);
     }
 
     /**
-     * @param $module
-     * @param $type
-     * @param $ownerid
+     * @param $options
+     * @param int $fromCommentId
      * @return CommentList|int
      */
-    public function CommentList($owner, $fromCommentId = 0){
-        $owner = $this->OwnerNormalize($owner);
+    public function CommentList($options, $fromCommentId = 0){
+        $owner = $this->OwnerNormalize($options);
 
         if (($err = $this->IsCommentView($owner)) > 0){
             return $err;
@@ -240,8 +243,9 @@ class CommentApp extends AbricosApplication {
         /** @var CommentList $list */
         $list = $this->InstanceClass('CommentList');
         $list->owner = $owner;
+        $notBody = isset($options->notBody) ? !!$options->notBody : false;
 
-        $rows = CommentQuery::CommentList($this, $owner, $fromCommentId);
+        $rows = CommentQuery::CommentList($this, $owner, $fromCommentId, $notBody);
         $maxCommentId = 0;
         while (($d = $this->db->fetch_array($rows))){
             /** @var Comment $comment */

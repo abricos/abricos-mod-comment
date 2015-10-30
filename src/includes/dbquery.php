@@ -57,10 +57,11 @@ class CommentQuery {
         return $commentid;
     }
 
-    public static function CommentList(CommentApp $app, CommentOwner $owner, $fromCommentId = 0){
+    public static function CommentList(CommentApp $app, CommentOwner $owner, $fromCommentId = 0, $notBody = false){
         $db = $app->db;
         $sql = "
             SELECT c.*
+            ".($notBody ? ",'' as body": "")."
             FROM ".$db->prefix."comment_owner o
             INNER JOIN ".$db->prefix."comment c ON c.commentid=o.commentid
             WHERE o.ownerModule='".bkstr($owner->module)."'

@@ -197,19 +197,11 @@ Component.entryPoint = function(NS){
         onInitAppWidget: function(err, appInstance){
             this.set('waiting', true);
 
-            var owner = this.get('commentOwner');
+            var owner = this.get('commentOwner'),
+                options = owner.toJSON();
 
-            appInstance.commentList(owner.toJSON(), function(err, result){
-                this.set('waiting', false);
-                if (!err){
-                    this.set('commentList', result.commentList);
-                    this.renderCommentList();
-                    appInstance.on('appResponses', this._onAppResponses, this);
-                    this.on('readOnlyChange', function(e){
-                        this.setReadOnly(e.newVal);
-                    }, this);
-                }
-            }, this);
+            options.notBody = !!this.get('srcBodyData');
+            appInstance.commentList(options, this._onLoadCommentList, this);
         },
         destructor: function(){
             this.get('appInstance').detach('appResponses', this._onAppResponses, this);
@@ -224,6 +216,42 @@ Component.entryPoint = function(NS){
                 return;
             }
             this.renderCommentList(commentList);
+        },
+        _fillCommentBody: function(){
+            var srcBodyData = this.get('srcBodyData');
+            if (!srcBodyData){
+                return;
+            }
+            var commentList = this.get('commentList'),
+                comment;
+            
+            srcBodyData.all('.commentBodyData').each(function(node){
+                comment = commentList.getById(node.getData('id'));
+                if (!comment){
+                    return;
+                }
+                comment.set('body', node.getHTML());
+            }, this);
+        },
+        _onLoadCommentList: function(err, result){
+            this.set('waiting', false);
+            if (err){
+                return;
+            }
+            this.set('commentList', result.commentList);
+
+            this._fillCommentBody();
+            this.renderCommentList();
+
+            this.get('appInstance').on('appResponses', this._onAppResponses, this);
+            this.on('readOnlyChange', function(e){
+                this.setReadOnly(e.newVal);
+            }, this);
+
+            var callbackfn = this.get('onInitCallback');
+            if (Y.Lang.isFunction(callbackfn)){
+                callbackfn.call(this, err);
+            }
         },
         renderCommentList: function(newCommentList){
             var tp = this.template,
@@ -247,7 +275,10 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget,reply'},
-            useExistingWidget: {value: false}
+            onInitCallback: {},
+            srcBodyData: {
+                validator: Y.one
+            }
         }
     });
 

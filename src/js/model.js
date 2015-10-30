@@ -9,7 +9,13 @@ Component.entryPoint = function(NS){
         SYS = Brick.mod.sys;
 
     var isOwner = function(val){
-        if (!val || !Y.Lang.isFunction(val.get)){
+        if (!val){
+            return false;
+        }
+        if (val.module && val.type && val.ownerid){
+            return true;
+        }
+        if (!Y.Lang.isFunction(val.get)){
             return false;
         }
         return true;
@@ -27,7 +33,13 @@ Component.entryPoint = function(NS){
         }
     }, {
         ATTRIBUTE: {
-           validator: isOwner
+            validator: isOwner,
+            setter: function(val){
+                if (val.module && val.type && val.ownerid){
+                    return this.get('appInstance').ownerCreate(val.module, val.type, val.ownerid);
+                }
+                return val;
+            }
         },
         isOwner: isOwner
     });
