@@ -42,7 +42,6 @@ Component.entryPoint = function(NS){
         },
         ATTRS: {
             Owner: {value: NS.Owner},
-            OwnerList: {value: NS.OwnerList},
             Comment: {value: NS.Comment},
             CommentList: {value: NS.CommentList}
         },

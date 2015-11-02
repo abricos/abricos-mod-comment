@@ -44,10 +44,6 @@ Component.entryPoint = function(NS){
         isOwner: isOwner
     });
 
-    NS.OwnerList = Y.Base.create('ownerList', SYS.AppModelList, [], {
-        appItem: NS.Owner
-    });
-
     NS.Statistic = Y.Base.create('statistic', SYS.AppModel, [], {
         structureName: 'Statistic'
     }, {

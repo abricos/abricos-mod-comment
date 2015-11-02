@@ -20,16 +20,6 @@ class CommentOwner extends AbricosModel {
 }
 
 /**
- * Class CommentOwnerList
- *
- * @method CommentOwner Get($id)
- * @method CommentOwner GetByIndex($index)
- */
-class CommentOwnerList extends AbricosModelList {
-}
-
-
-/**
  * Class CommentStatistic
  *
  * @property int $count
