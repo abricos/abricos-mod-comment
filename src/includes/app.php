@@ -62,12 +62,6 @@ class CommentApp extends AbricosApplication {
         return !empty($modURating);
     }
 
-    private $_cache = array();
-
-    public function CacheClean(){
-        $this->_cache = array();
-    }
-
     /**
      * @param $owner
      * @return CommentOwner
