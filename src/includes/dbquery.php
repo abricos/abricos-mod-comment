@@ -72,6 +72,10 @@ class CommentQuery {
         return $db->query_read($sql);
     }
 
+    public static function CommentLiveListByModule(CommentApp $app, $module){
+
+    }
+
     public static function StatisticList(CommentApp $app, $module, $type, $ownerids){
         $db = $app->db;
         $aw = array();
