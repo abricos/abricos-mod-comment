@@ -125,11 +125,11 @@ class CommentApp extends AbricosApplication {
     public function IsCommentWrite($owner){
         $owner = $this->OwnerNormalize($owner);
         if (!$this->OwnerAppFunctionExist($owner->module, 'Comment_IsWrite')){
-            return 500;
+            return AbricosResponse::ERR_SERVER_ERROR;
         }
         $ownerApp = $this->GetOwnerApp($owner->module);
         if (!$ownerApp->Comment_IsWrite($owner->type, $owner->ownerid)){
-            return 403;
+            return AbricosResponse::ERR_FORBIDDEN;
         }
         return 0;
     }
@@ -188,13 +188,19 @@ class CommentApp extends AbricosApplication {
 
         $comment = $this->ReplyParser($owner, $d);
         if (empty($comment)){
-            return 400;
+            return AbricosResponse::ERR_BAD_REQUEST;
         }
 
         $commentid = CommentQuery::CommentAppend($this, $owner, $comment);
         $comment->id = $commentid;
 
         $this->StatisticUpdate($owner);
+
+        if ($this->OwnerAppFunctionExist($owner->module, 'Comment_SendNotify')){
+            $parentComment = $this->Comment($owner, $comment->parentid);
+            $ownerApp = $this->GetOwnerApp($owner->module);
+            $ownerApp->Comment_SendNotify($owner->type, $comment, $parentComment);
+        }
 
         return $comment;
     }
