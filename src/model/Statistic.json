@@ -23,6 +23,16 @@
       "type": "date",
       "json": "lcdl",
       "dbField": "lastCommentDate"
+    },
+    "viewid": {
+      "type": "int",
+      "json": "vwid",
+      "dbField": "viewCommentid"
+    },
+    "viewDate": {
+      "type": "date",
+      "json": "vwdl",
+      "dbField": "viewDate"
     }
   }
 }

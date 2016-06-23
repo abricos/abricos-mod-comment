@@ -85,7 +85,7 @@ class CommentQuery {
         }
 
         for ($i = 0; $i < $count; $i++){
-            $aw[] = "ownerid=".bkint($ownerids[$i]);
+            $aw[] = "o.ownerid=".bkint($ownerids[$i]);
         }
 
         $sql = "
@@ -94,10 +94,17 @@ class CommentQuery {
 			  o.commentCount,
 			  o.lastCommentid,
 			  o.lastUserid,
-			  o.lastCommentDate
+			  o.lastCommentDate,
+			  v.commentid as viewCommentid,
+			  v.dateline as viewDate
 			FROM ".$db->prefix."comment_ownerstat o
-			WHERE ownerModule='".bkstr($module)."'
-			    AND ownerType='".bkstr($type)."'
+			LEFT JOIN ".$db->prefix."comment_userview v 
+			    ON o.ownerModule=v.ownerModule
+			    AND o.ownerType=v.ownerType
+			    AND o.ownerid=v.ownerid
+			    AND v.userid=".intval(Abricos::$user->id)."
+			WHERE o.ownerModule='".bkstr($module)."'
+			    AND o.ownerType='".bkstr($type)."'
 			    AND (".implode(" OR ", $aw).")
 		";
         return $db->query_read($sql);
