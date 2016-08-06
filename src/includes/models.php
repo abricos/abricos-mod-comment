@@ -69,7 +69,9 @@ class Comment extends AbricosModel {
      */
     public function FillUsers($userList = null){
         if (empty($userList)){
-            $userList = $this->app->UProfileApp()->UserListByIds($this->userid);
+            /** @var UProfileApp $uprofile */
+            $uprofile = Abricos::GetApp('uprofile');
+            $userList = $uprofile->UserListByIds($this->userid);
         }
         $this->user = $userList->Get($this->userid);
     }
@@ -102,7 +104,10 @@ class CommentList extends AbricosModelList {
             $userids[] = $comment->userid;
         }
 
-        $userList = $this->app->UProfileApp()->UserListByIds($userids);
+        /** @var UProfileApp $uprofile */
+        $uprofile = Abricos::GetApp('uprofile');
+
+        $userList = $uprofile->UserListByIds($userids);
 
         for ($i = 0; $i < $count; $i++){
             $comment = $this->GetByIndex($i);

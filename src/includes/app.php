@@ -43,19 +43,6 @@ class CommentApp extends AbricosApplication {
         return null;
     }
 
-    private $_uprofileApp = null;
-
-    /**
-     * @return UProfileApp
-     */
-    public function UProfileApp(){
-        if (!is_null($this->_uprofileApp)){
-            return $this->_uprofileApp;
-        }
-        $module = Abricos::GetModule('uprofile');
-        return $this->_uprofileApp = $module->GetManager()->GetApp();
-    }
-
     // TODO: release
     public function IsRaiting(){
         $modURating = Abricos::GetModule("urating");
@@ -163,6 +150,10 @@ class CommentApp extends AbricosApplication {
         $comment->userid = Abricos::$user->id;
         $comment->dateline = TIMENOW;
 
+        /** @var UProfileApp $uprofile */
+        $uprofile = Abricos::GetApp('uprofile');
+        $comment->user = $uprofile->User(Abricos::$user->id);
+
         return $comment;
     }
 
@@ -198,8 +189,11 @@ class CommentApp extends AbricosApplication {
 
         if ($this->OwnerAppFunctionExist($owner->module, 'Comment_SendNotify')){
             $parentComment = $this->Comment($owner, $comment->parentid);
+            if (AbricosResponse::IsError($parentComment)){
+                $parentComment = null;
+            }
             $ownerApp = $this->GetOwnerApp($owner->module);
-            $ownerApp->Comment_SendNotify($owner->type, $comment, $parentComment);
+            $ownerApp->Comment_SendNotify($owner->type, $owner->ownerid, $comment, $parentComment);
         }
 
         return $comment;
