@@ -68,7 +68,8 @@ Component.entryPoint = function(NS){
         appItem: NS.Comment
     }, {
         ATTRS: {
-            commentOwner: NS.Owner.ATTRIBUTE
+            commentOwner: NS.Owner.ATTRIBUTE,
+            userview: {value: 0}
         }
     });
 };

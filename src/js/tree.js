@@ -9,7 +9,8 @@ Component.entryPoint = function(NS){
 
     var Y = Brick.YUI,
         COMPONENT = this,
-        SYS = Brick.mod.sys;
+        SYS = Brick.mod.sys,
+        UID = Brick.env.user.id | 0;
 
     var ExtCommentTree = function(){
     };
@@ -224,7 +225,7 @@ Component.entryPoint = function(NS){
             }
             var commentList = this.get('commentList'),
                 comment;
-            
+
             srcBodyData.all('.commentBodyData').each(function(node){
                 comment = commentList.getById(node.getData('id'));
                 if (!comment){
@@ -285,6 +286,16 @@ Component.entryPoint = function(NS){
     NS.CommentTreeWidget.ItemWidget = Y.Base.create('itemWidget', SYS.AppWidget, [
         NS.ExtCommentTree
     ], {
+        buildTData: function(){
+            var comment = this.get('comment'),
+                commentid = comment.get('id'),
+                userview = this.get('commentList').get('userview');
+
+            return {
+                isNewClass: comment.get('userid') !== UID && commentid > userview
+                    ? 'newComment' : ''
+            };
+        },
         onInitAppWidget: function(err, appInstance){
             var tp = this.template,
                 comment = this.get('comment'),

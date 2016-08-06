@@ -54,6 +54,7 @@ Component.entryPoint = function(NS){
                 type: 'modelList:CommentList',
                 onResponse: function(commentList, srcData){
                     commentList.set('commentOwner', this.ownerCreate(srcData.owner));
+                    commentList.set('userview', srcData.userview);
 
                     var userIds = commentList.toArray('userid', {distinct: true});
                     if (userIds.length === 0){
