@@ -186,5 +186,3 @@ class CommentQuery {
         $db->query_write($sql);
     }
 }
-
-?>

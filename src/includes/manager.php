@@ -51,5 +51,3 @@ class CommentManager extends Ab_ModuleManager {
         return $this->GetApp()->AJAX($d);
     }
 }
-
-?>

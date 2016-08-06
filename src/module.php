@@ -58,5 +58,3 @@ class CommentPermission extends Ab_UserPermission {
 }
 
 Abricos::ModuleRegister(new CommentModule());
-
-?>

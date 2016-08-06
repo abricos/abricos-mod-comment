@@ -122,5 +122,3 @@ class CommentList extends AbricosModelList {
         return $ret;
     }
 }
-
-?>

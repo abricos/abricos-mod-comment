@@ -17,7 +17,6 @@ require_once 'dbquery.php';
 class CommentManager extends Ab_ModuleManager {
 
 
-
     public function FullList($page, $limit){
         if (!$this->IsAdminRole()){
             return null;
@@ -244,5 +243,3 @@ class CommentManager extends Ab_ModuleManager {
         return $manager->Comment_IsVoting($uRep, $act, $elid, $info['ctid']);
     }
 }
-
-?>

@@ -53,8 +53,4 @@ class old_CommentQuery {
         return $ret;
     }
 
-
-
 }
-
-?>

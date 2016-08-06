@@ -49,5 +49,3 @@ $brick->content = Brick::ReplaceVarByData($brick->content, array(
     "brickid" => $brick->id,
     "tree" => CommentApp_BuildCommentTree($commentList, $brick, 0)
 ));
-
-?>

@@ -324,5 +324,3 @@ class CommentApp extends AbricosApplication {
         return $statistic;
     }
 }
-
-?>

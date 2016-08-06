@@ -7,7 +7,6 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-
 function CommentApp_BuildCommentTree(CommentList $list, Ab_CoreBrick $brick, $parentid){
     $count = $list->Count();
     $lst = "";
@@ -39,5 +38,3 @@ function CommentApp_BuildCommentTree(CommentList $list, Ab_CoreBrick $brick, $pa
 
     return $lst;
 }
-
-?>

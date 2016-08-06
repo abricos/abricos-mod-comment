@@ -179,5 +179,3 @@ if ($updateManager->isUpdate('0.4.3') && !$updateManager->isInstall()){
     $db->query_write("DROP TABLE IF EXISTS ".$pfx."cmt_comment");
     $db->query_write("DROP TABLE IF EXISTS ".$pfx."cmt_lastview");
 }
-
-?>
