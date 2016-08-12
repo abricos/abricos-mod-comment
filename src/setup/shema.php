@@ -147,6 +147,22 @@ if ($updateManager->isUpdate('0.4.3') && !$updateManager->isInstall()){
     ");
 
     $db->query_write("
+        INSERT INTO ".$pfx."comment_userview (
+            ownerModule, ownerType, ownerid,
+            userid, commentid, dateline
+        )
+        SELECT
+            t.modman,
+            'content',
+            c.contentid,
+            c.userid,
+            c.commentid,
+            c.dateline
+        FROM ".$pfx."cmt_lastview c
+        INNER JOIN ".$pfx."content t ON t.contentid=c.contentid
+    ");
+
+    $db->query_write("
         INSERT INTO ".$pfx."comment_ownerstat (
             ownerModule, ownerType, ownerid,
             commentCount,
