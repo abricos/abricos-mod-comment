@@ -68,6 +68,9 @@ class Comment extends AbricosModel {
      * @param UProfileUserList $userList
      */
     public function FillUsers($userList = null){
+        if (!empty($this->user)){
+            return;
+        }
         if (empty($userList)){
             /** @var UProfileApp $uprofile */
             $uprofile = Abricos::GetApp('uprofile');

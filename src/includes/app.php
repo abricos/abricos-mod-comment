@@ -149,10 +149,7 @@ class CommentApp extends AbricosApplication {
         $comment->body = $body;
         $comment->userid = Abricos::$user->id;
         $comment->dateline = TIMENOW;
-
-        /** @var UProfileApp $uprofile */
-        $uprofile = Abricos::GetApp('uprofile');
-        $comment->user = $uprofile->User(Abricos::$user->id);
+        $comment->FillUsers();
 
         return $comment;
     }
@@ -161,13 +158,13 @@ class CommentApp extends AbricosApplication {
         $comment = $this->Reply($owner, $d);
         $ret = $this->ResultToJSON('reply', $comment);
 
-        if (!is_integer($comment)){
-            $ret = $this->ImplodeJSON(
-                $this->CommentListToJSON($owner, $comment->id - 1),
-                $ret
-            );
+        if (AbricosResponse::IsError($comment)){
+            return $ret;
         }
-        return $ret;
+        return $this->ImplodeJSON(
+            $this->CommentListToJSON($owner, $comment->id - 1),
+            $ret
+        );
     }
 
     public function Reply($owner, $d){
@@ -191,6 +188,8 @@ class CommentApp extends AbricosApplication {
             $parentComment = $this->Comment($owner, $comment->parentid);
             if (AbricosResponse::IsError($parentComment)){
                 $parentComment = null;
+            } else {
+                $parentComment->FillUsers();
             }
             $ownerApp = $this->GetOwnerApp($owner->module);
             $ownerApp->Comment_SendNotify($owner->type, $owner->ownerid, $comment, $parentComment);
@@ -275,7 +274,8 @@ class CommentApp extends AbricosApplication {
         if (empty($d)){
             return 404;
         }
-        return $this->InstanceClass('Comment', $d);
+        $comment = $this->InstanceClass('Comment', $d);
+        return $comment;
     }
 
     /**
