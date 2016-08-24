@@ -162,7 +162,7 @@ class CommentApp extends AbricosApplication {
             return $ret;
         }
         return $this->ImplodeJSON(
-            $this->CommentListToJSON($owner, $comment->id - 1),
+            $this->CommentListToJSON($owner, $owner->userview),
             $ret
         );
     }
@@ -216,6 +216,7 @@ class CommentApp extends AbricosApplication {
         return $comment;
     }
 
+
     public function CommentListToJSON($options, $fromCommentId = 0){
         $ret = $this->CommentList($options, $fromCommentId);
         return $this->ResultToJSON('commentList', $ret);
@@ -259,9 +260,7 @@ class CommentApp extends AbricosApplication {
     }
 
     /**
-     * @param $module
-     * @param $type
-     * @param $ownerid
+     * @param $owner
      * @param $commentid
      * @return Comment|int
      */

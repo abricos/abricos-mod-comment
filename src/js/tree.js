@@ -298,8 +298,11 @@ Component.entryPoint = function(NS){
         },
         onInitAppWidget: function(err, appInstance){
             var tp = this.template,
+                owner = this.get('commentOwner'),
                 comment = this.get('comment'),
                 user = comment.get('user');
+
+            owner.set('userview', comment.get('id'));
 
             tp.setHTML({
                 aViewName: user.get('viewName'),

@@ -15,19 +15,6 @@ Component.entryPoint = function(NS){
     });
 
     SYS.Application.build(COMPONENT, {}, {
-        ownerCreate: function(module, type, ownerid){
-            var Owner = this.get('Owner');
-
-            if (Y.Lang.isObject(module)){
-                return new Owner(Y.merge(module, {appInstance: this}));
-            }
-
-            var owner = new Owner({appInstance: this});
-            owner.set('module', module);
-            owner.set('type', type);
-            owner.set('ownerid', ownerid);
-            return owner;
-        },
         initializer: function(){
             var instance = this;
             this.appStructure(function(){
@@ -41,6 +28,15 @@ Component.entryPoint = function(NS){
             uprofile: {}
         },
         ATTRS: {
+            ownerList: {
+                readOnly: true,
+                getter: function(){
+                    if (!this._ownerListAttr){
+                        this._ownerListAttr = new NS.OwnerList({appInstance: this});
+                    }
+                    return this._ownerListAttr;
+                }
+            },
             Owner: {value: NS.Owner},
             Comment: {value: NS.Comment},
             CommentList: {value: NS.CommentList},
@@ -53,7 +49,12 @@ Component.entryPoint = function(NS){
                 attribute: false,
                 type: 'modelList:CommentList',
                 onResponse: function(commentList, srcData){
-                    commentList.set('commentOwner', this.ownerCreate(srcData.owner));
+                    var ownerList = this.get('ownerList'),
+                        owner = ownerList.getOwner(srcData.owner);
+
+                    owner.set('userview', srcData.userview);
+
+                    commentList.set('commentOwner', owner);
                     commentList.set('userview', srcData.userview);
 
                     var userIds = commentList.toArray('userid', {distinct: true});

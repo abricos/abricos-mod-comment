@@ -61,14 +61,18 @@ class CommentQuery {
         $db = $app->db;
         $sql = "
             SELECT c.*
-            ".($notBody ? ",'' as body": "")."
+            ".($notBody ? ",'' as body" : "")."
             FROM ".$db->prefix."comment_owner o
             INNER JOIN ".$db->prefix."comment c ON c.commentid=o.commentid
             WHERE o.ownerModule='".bkstr($owner->module)."'
                 AND o.ownerType='".bkstr($owner->type)."'
                 AND o.ownerid=".intval($owner->ownerid)."
-                AND c.commentid>".bkint($fromCommentId)."
         ";
+        if ($fromCommentId > 0){
+            $sql .= "
+                AND c.commentid>".bkint($fromCommentId)."
+            ";
+        }
         return $db->query_read($sql);
     }
 
