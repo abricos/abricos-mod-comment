@@ -283,7 +283,7 @@ class CommentApp extends AbricosApplication {
      * @param int|array[int] $ownerid Owner Id
      */
     public function Statistic(CommentOwner $owner){
-        $rows = CommentQuery::StatisticList($this, $owner->module, $owner->type, [$owner->ownerid]);
+        $rows = CommentQuery::StatisticList($this, $owner->module, $owner->type, array($owner->ownerid));
         $d = $this->db->fetch_array($rows);
         if (empty($d)){
             return null;
