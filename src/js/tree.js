@@ -22,7 +22,7 @@ Component.entryPoint = function(NS){
             readOnly: true,
             getter: function(){
                 if (this._rootWidgetValue){
-                    this._rootWidgetValue;
+                    return this._rootWidgetValue;
                 }
                 var root = this,
                     parentWidget;
