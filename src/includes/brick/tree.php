@@ -33,19 +33,11 @@ if (is_integer($commentList)){
     return;
 }
 
-$writeScript = "";
-if ($app->IsCommentWrite($owner) === 0){
-    $writeScript = Brick::ReplaceVarByData($v['writeScript'], array(
-        "brickid" => $brick->id,
-        "ownerModule" => $p['module'],
-        "ownerType" => $p['type'],
-        "ownerid" => $p['ownerid']
-    ));
-}
-
 $brick->content = Brick::ReplaceVarByData($brick->content, array(
     "count" => $commentList->Count(),
-    "writeScript" => $writeScript,
     "brickid" => $brick->id,
+    "module" => $owner->module,
+    "type" => $owner->type,
+    "ownerid" => $owner->ownerid,
     "tree" => CommentApp_BuildCommentTree($commentList, $brick, 0)
 ));

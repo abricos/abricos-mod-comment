@@ -1,5 +1,6 @@
 <!--[*]
 [script]brick/tree.php[/script]
+[mjs=comment]ui.js[/mjs]
 [mcss=comment]comment.css[/mcss]
 
 [p=module][/p]
@@ -18,6 +19,8 @@
 
         <div class="date pull-left">{v#date}</div>
 
+        <div class="pull-right hide">{v#voting}</div>
+
         <div class="clearfix"></div>
     </div>
 
@@ -29,37 +32,13 @@
 </div>
 [/v]
 
-[v=writeScript]
-    <div id="{v#brickid}-widget" class="aw-comment commentTree hide"></div>
-    <script>
-            Brick.use('comment', 'tree', function(err, NS){
-                var Y = Brick.YUI;
-
-                new NS.CommentTreeWidget({
-                    boundingBox: Y.one('#{v#brickid}-widget'),
-                    srcBodyData: Y.one('#{v#brickid}'),
-                    readOnly: false,
-                    commentOwner: {
-                        module: '{v#ownerModule}',
-                        type: '{v#ownerType}',
-                        ownerid: '{v#ownerid}' | 0
-                    },
-                    onInitCallback: function(err){
-                        if (err){
-                            return;
-                        }
-                        Y.one('#{v#brickid}-widget').removeClass('hide');
-                        Y.one('#{v#brickid}').remove();
-                    }
-                });
-            });
-    </script>
-[/v]
 
 [*]-->
-<div id="{v#brickid}" class="aw-comment commentTree">
-    <h3>Комментарии (<span>{v#count}</span>)</h3>
-    {v#tree}
+<div class="aw-comment commentTree"
+     data-module="{v#module}" data-type="{v#type}" data-ownerid="{v#ownerid}">
+    <div class="staticNode">
+        <h3>Комментарии (<span>{v#count}</span>)</h3>
+        {v#tree}
+    </div>
+    <div class="dinamicNode hide"></div>
 </div>
-
-{v#writeScript}
