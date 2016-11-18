@@ -25,7 +25,8 @@ Component.entryPoint = function(NS){
         }
     }, [], {
         APPS: {
-            uprofile: {}
+            uprofile: {},
+            urating: {}
         },
         ATTRS: {
             ownerList: {

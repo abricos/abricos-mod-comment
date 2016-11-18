@@ -21,9 +21,17 @@ function CommentApp_BuildCommentTree(CommentList $list, Ab_CoreBrick $brick, $pa
             "userURI" => "",
             "userName" => "",
             "userAvatar" => "",
+            "voting" => "",
             "date" => rusDateTime($comment->dateline),
             "body" => $comment->body
         );
+
+        $voting = $comment->voting;
+        if (!empty($voting)){
+            /** @var URatingApp $uratingApp */
+            $uratingApp = Abricos::GetApp('urating');
+            $replace['voting'] = $uratingApp->VotingHTML($voting);
+        }
 
         $user = $comment->user;
         if (!empty($user)){

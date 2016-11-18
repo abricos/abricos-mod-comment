@@ -1,6 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
+        {name: 'urating', files: ['vote.js']},
         {name: 'sys', files: ['editor.js']},
         {name: '{C#MODNAME}', files: ['lib.js']}
     ]
@@ -300,6 +301,7 @@ Component.entryPoint = function(NS){
             var tp = this.template,
                 owner = this.get('commentOwner'),
                 comment = this.get('comment'),
+                voting = comment.get('voting'),
                 user = comment.get('user');
 
             owner.set('userview', comment.get('id'));
@@ -311,6 +313,13 @@ Component.entryPoint = function(NS){
             });
 
             tp.one('avatarSrc').set('src', user.get('avatarSrc45'));
+
+            if (voting){
+                this.votingWidget = new Brick.mod.urating.VotingWidget({
+                    boundingBox: this.gel('voting'),
+                    voting: voting
+                });
+            }
 
             this._renderCommentList();
         }

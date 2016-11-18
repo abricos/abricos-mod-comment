@@ -54,6 +54,7 @@ class CommentStatisticList extends AbricosModelList {
  * @property int $userid
  * @property string $body
  * @property int $dateline
+ * @property URatingVoting $voting
  */
 class Comment extends AbricosModel {
     protected $_structModule = 'comment';

@@ -18,6 +18,10 @@
       "type": "string",
       "json": "bd"
     },
+    "voting": {
+      "type": "model:urating:Voting",
+      "json": "vt"
+    },
     "dateline": {
       "type": "date",
       "json": "dl"

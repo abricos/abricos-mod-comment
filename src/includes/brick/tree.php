@@ -15,9 +15,7 @@ $p = &$brick->param->param;
 $module = Abricos::GetModule('comment');
 
 /** @var CommentApp $app */
-$app = $module->GetManager()->GetApp();
-
-$module->ScriptRequireOnce('includes/brick/functions.php');
+$app = Abricos::GetApp('comment');
 
 $owner = $app->OwnerNormalize(array(
     "module" => $p['module'],
@@ -26,12 +24,14 @@ $owner = $app->OwnerNormalize(array(
 ));
 
 $commentList = $app->CommentList($owner);
-$commentList->FillUsers();
-
-if (is_integer($commentList)){
+if (AbricosResponse::IsError($commentList)){
     $brick->content = "";
     return;
 }
+
+$module->ScriptRequireOnce('includes/brick/functions.php');
+
+$commentList->FillUsers();
 
 $brick->content = Brick::ReplaceVarByData($brick->content, array(
     "count" => $commentList->Count(),

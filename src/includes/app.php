@@ -43,12 +43,6 @@ class CommentApp extends AbricosApplication {
         return null;
     }
 
-    // TODO: release
-    public function IsRaiting(){
-        $modURating = Abricos::GetModule("urating");
-        return !empty($modURating);
-    }
-
     /**
      * @param $owner
      * @return CommentOwner
@@ -256,6 +250,22 @@ class CommentApp extends AbricosApplication {
             CommentQuery::UserViewSave($this, $owner, $maxCommentId);
         }
 
+        /** @var URatingApp $uratingApp */
+        $uratingApp = Abricos::GetApp('urating');
+        $votingList = null;
+        if (!empty($uratingApp) && $list->Count() > 0){
+            $commentIds = $list->ToArray('id');
+            $votingList = $uratingApp->VotingList($owner->module, $owner->type.'-comment', $commentIds);
+
+            $count = $list->Count();
+            for ($i = 0; $i < $count; $i++){
+                $comment = $list->GetByIndex($i);
+                $comment->voting = $votingList->GetByOwnerId($comment->id);
+                $comment->voting->ownerDate = $comment->dateline;
+                $comment->voting->userid = $comment->userid;
+            }
+        }
+
         return $list;
     }
 
@@ -275,6 +285,14 @@ class CommentApp extends AbricosApplication {
         }
         $comment = $this->InstanceClass('Comment', $d);
         return $comment;
+    }
+
+    public function OwnerIdByCommentId($module, $type, $commentid){
+        $d = CommentQuery::OwnerIdByCommentId($this, $module, $type, $commentid);
+        if (empty($d)){
+            return 0;
+        }
+        return intval($d['ownerid']);
     }
 
     /**
