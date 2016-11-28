@@ -30,7 +30,7 @@ function CommentApp_BuildCommentTree(CommentList $list, Ab_CoreBrick $brick, $pa
         if (!empty($voting)){
             /** @var URatingApp $uratingApp */
             $uratingApp = Abricos::GetApp('urating');
-            $replace['voting'] = $uratingApp->VotingHTML($voting);
+            $replace['voting'] = $uratingApp->VotingHTML($voting, true);
         }
 
         $user = $comment->user;
