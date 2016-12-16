@@ -31,8 +31,6 @@ if (AbricosResponse::IsError($commentList)){
 
 $module->ScriptRequireOnce('includes/brick/functions.php');
 
-$commentList->FillUsers();
-
 $brick->content = Brick::ReplaceVarByData($brick->content, array(
     "count" => $commentList->Count(),
     "brickid" => $brick->id,

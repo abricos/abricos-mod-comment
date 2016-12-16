@@ -26,23 +26,44 @@ class CommentOwner extends AbricosModel {
  * @property int $lastid
  * @property int $lastUserid
  * @property int $lastDate
+ *
+ * @property UProfileUser $lastUser
  */
 class CommentStatistic extends AbricosModel {
     protected $_structModule = 'comment';
     protected $_structName = 'Statistic';
 
-    /**
-     * @var UProfileUser
-     */
-    public $lastUser;
+    public function __get($name){
+        switch ($name){
+            case 'lastUser':
+                /** @var UProfileApp $uprofileApp */
+                $uprofileApp = Abricos::GetApp('uprofile');
+                return $uprofileApp->User($this->lastUserid);
+        }
+        return parent::__get($name);
+    }
+
 }
 
 /**
  * Class CommentStatisticList
+ *
  * @method CommentStatistic Get($id)
  * @method CommentStatistic GetByIndex($index)
  */
 class CommentStatisticList extends AbricosModelList {
+
+    /**
+     * @param CommentStatistic $item
+     */
+    public function Add($item){
+        /** @var UProfileApp $uprofileApp */
+        $uprofileApp = Abricos::GetApp('uprofile');
+        $uprofileApp->UserAddToPreload($item->lastUserid);
+
+        return parent::Add($item);
+    }
+
 }
 
 /**
@@ -55,29 +76,21 @@ class CommentStatisticList extends AbricosModelList {
  * @property string $body
  * @property int $dateline
  * @property URatingVoting $voting
+ *
+ * @property UProfileUser $user
  */
 class Comment extends AbricosModel {
     protected $_structModule = 'comment';
     protected $_structName = 'Comment';
 
-    /**
-     * @var UProfileUser
-     */
-    public $user;
-
-    /**
-     * @param UProfileUserList $userList
-     */
-    public function FillUsers($userList = null){
-        if (!empty($this->user)){
-            return;
+    public function __get($name){
+        switch ($name){
+            case 'user':
+                /** @var UProfileApp $uprofileApp */
+                $uprofileApp = Abricos::GetApp('uprofile');
+                return $uprofileApp->User($this->userid);
         }
-        if (empty($userList)){
-            /** @var UProfileApp $uprofile */
-            $uprofile = Abricos::GetApp('uprofile');
-            $userList = $uprofile->UserListByIds($this->userid);
-        }
-        $this->user = $userList->Get($this->userid);
+        return parent::__get($name);
     }
 }
 
@@ -100,23 +113,15 @@ class CommentList extends AbricosModelList {
      */
     public $owner;
 
-    public function FillUsers(){
-        $count = $this->Count();
-        $userids = array();
-        for ($i = 0; $i < $count; $i++){
-            $comment = $this->GetByIndex($i);
-            $userids[] = $comment->userid;
-        }
+    /**
+     * @param Comment $item
+     */
+    public function Add($item){
+        /** @var UProfileApp $uprofileApp */
+        $uprofileApp = Abricos::GetApp('uprofile');
+        $uprofileApp->UserAddToPreload($item->userid);
 
-        /** @var UProfileApp $uprofile */
-        $uprofile = Abricos::GetApp('uprofile');
-
-        $userList = $uprofile->UserListByIds($userids);
-
-        for ($i = 0; $i < $count; $i++){
-            $comment = $this->GetByIndex($i);
-            $comment->FillUsers($userList);
-        }
+        return parent::Add($item);
     }
 
     public function ToJSON(){

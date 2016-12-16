@@ -7,9 +7,6 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-require_once 'dbquery.php';
-require_once 'models.php';
-
 /**
  * Class CommentApp
  *
@@ -42,6 +39,7 @@ class CommentApp extends AbricosApplication {
         }
         return null;
     }
+
 
     /**
      * @param $owner
@@ -143,7 +141,6 @@ class CommentApp extends AbricosApplication {
         $comment->body = $body;
         $comment->userid = Abricos::$user->id;
         $comment->dateline = TIMENOW;
-        $comment->FillUsers();
 
         return $comment;
     }
@@ -182,8 +179,6 @@ class CommentApp extends AbricosApplication {
             $parentComment = $this->Comment($owner, $comment->parentid);
             if (AbricosResponse::IsError($parentComment)){
                 $parentComment = null;
-            } else {
-                $parentComment->FillUsers();
             }
             $ownerApp = $this->GetOwnerApp($owner->module);
             $ownerApp->Comment_SendNotify($owner->type, $owner->ownerid, $comment, $parentComment);
@@ -204,7 +199,7 @@ class CommentApp extends AbricosApplication {
 
         $comment = $this->ReplyParser($owner, $d);
         if (empty($comment)){
-            return 400;
+            return AbricosResponse::ERR_BAD_REQUEST;
         }
 
         return $comment;
@@ -281,7 +276,7 @@ class CommentApp extends AbricosApplication {
         }
         $d = CommentQuery::Comment($this, $owner, $commentid);
         if (empty($d)){
-            return 404;
+            return AbricosResponse::ERR_NOT_FOUND;
         }
         $comment = $this->InstanceClass('Comment', $d);
         return $comment;

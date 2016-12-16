@@ -7,8 +7,6 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-require_once 'dbquery.php';
-
 /**
  * Class CommentManager
  *
@@ -32,19 +30,6 @@ class CommentManager extends Ab_ModuleManager {
             return true;
         }
         return $this->IsRoleEnable(CommentAction::VIEW);
-    }
-
-    private $_app = null;
-
-    /**
-     * @return CommentApp
-     */
-    public function GetApp(){
-        if (!is_null($this->_app)){
-            return $this->_app;
-        }
-        $this->module->ScriptRequire('includes/app.php');
-        return $this->_app = new CommentApp($this);
     }
 
     public function AJAX($d){
